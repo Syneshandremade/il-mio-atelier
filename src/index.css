@@ -366,3 +366,41 @@ a:hover { text-decoration: underline; }
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
+@media (max-width: 640px) {
+  /* Header mobile visibile */
+  .mobile-header {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  /* Titolo collezione più piccolo */
+  .main-content h1 {
+    font-size: 22px !important;
+  }
+
+  /* Pulsanti header collezione in colonna */
+  .main-content .btn-group {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  /* Griglia 2 colonne su mobile */
+  .main-content [style*="minmax(190px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Padding ridotto */
+  .main-content > div {
+    padding: 16px 12px !important;
+  }
+}
