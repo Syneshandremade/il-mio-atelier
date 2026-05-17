@@ -3,7 +3,7 @@ import { supabase } from '../supabase'
 
 export function useSupabaseData(tabella, defaultVal, userId) {
   const [data,    setData]    = useState(defaultVal)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!userId) { setLoading(false); return }
