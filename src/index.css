@@ -42,6 +42,9 @@
 
   --ff-display: 'Playfair Display', Georgia, serif;
   --ff-body:    'Jost', system-ui, sans-serif;
+  --fw-display: 600;
+  --fw-body:    300;
+  --fw-bold:    500;
   --r-s:   8px;
   --r-m:   14px;
   --r-l:   20px;
@@ -55,7 +58,11 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; -webkit-text-size-adjust: 100%; }
-body { font-family: var(--ff-body); background: var(--bg); min-height: 100vh; color: var(--text); -webkit-font-smoothing: antialiased; }
+body { font-family: var(--ff-body); background: var(--bg); min-height: 100vh; color: var(--text); -webkit-font-smoothing: antialiased; font-weight: 300; }
+button { font-weight: 400; }
+h1, h2, h3 { font-weight: 600; }
+b, strong { font-weight: 500; }
+label { font-weight: 400; }
 button { font-family: var(--ff-body); cursor: pointer; }
 button:active { transform: scale(0.97); }
 input, textarea, select { font-family: var(--ff-body); }
