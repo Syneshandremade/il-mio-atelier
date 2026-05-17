@@ -1,6 +1,4 @@
-import { useState } from 'react'
-import { supabase } from './supabase'
-import { useStorage } from './hooks/useStorage'
+import { useState, useEffect } from 'react'
 import { APP_NAME, APP_TAGLINE, APP_EMOJI, COLLEZIONI_DEFAULT, PRODOTTI_DEFAULT, IMBALLAGGI_DEFAULT, CAT_IMBALLAGGI } from './constants'
 import MaterialeCard     from './components/MaterialeCard'
 import MaterialeModal    from './components/MaterialeModal'
@@ -11,6 +9,37 @@ import ProdottoModal     from './components/ProdottoModal'
 import AnalisiDashboard  from './components/AnalisiDashboard'
 import { Btn }           from './components/ui'
 
+const SUPABASE_URL = 'https://zxnufwyjgisvmyipnwls.supabase.co'
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp4bnVmd3lqZ2lzdm15aXBud2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMDU1MzksImV4cCI6MjA5NDU4MTUzOX0.6A-o82dc_qLKQqOyRSZTn35er0FKoSxNuizpR_sRz2E'
+
+async function dbGet(tabella) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${tabella}?select=*`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  })
+  const rows = await res.json()
+  return Array.isArray(rows) ? rows.map(r => r.data) : []
+}
+
+async function dbUpsert(tabella, elemento) {
+  await fetch(`${SUPABASE_URL}/rest/v1/${tabella}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'resolution=merge-duplicates'
+    },
+    body: JSON.stringify({ id: elemento.id, data: elemento })
+  })
+}
+
+async function dbDelete(tabella, id) {
+  await fetch(`${SUPABASE_URL}/rest/v1/${tabella}?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  })
+}
+
 const TABS = [
   { id: 'materiali',  emoji: '🧶', label: 'MATERIALI'  },
   { id: 'imballaggi', emoji: '📦', label: 'IMBALLAGGI' },
@@ -19,102 +48,156 @@ const TABS = [
 ]
 
 export default function AppContent({ onLogout }) {
-  const [collezioni, setCollezioni] = useStorage('atelier-v3-collezioni', COLLEZIONI_DEFAULT)
-  const [imballaggi, setImballaggi] = useStorage('atelier-v3-imballaggi', IMBALLAGGI_DEFAULT)
-  const [prodotti,   setProdotti]   = useStorage('atelier-v3-prodotti',   PRODOTTI_DEFAULT)
-  const [activeCol,  setActiveCol]  = useStorage('atelier-v3-col',        COLLEZIONI_DEFAULT[0]?.id)
+  const [collezioni, setCollezioni] = useState([])
+  const [imballaggi, setImballaggi] = useState([])
+  const [prodotti,   setProdotti]   = useState([])
+  const [activeCol,  setActiveCol]  = useState(null)
   const [tab,        setTab]        = useState('materiali')
   const [modal,      setModal]      = useState(null)
   const [target,     setTarget]     = useState(null)
   const [cerca,      setCerca]      = useState('')
+  const [loading,    setLoading]    = useState(true)
+  const [errore,     setErrore]     = useState(null)
+
+  useEffect(() => {
+    async function carica() {
+      try {
+        const [cols, imbs, prods] = await Promise.all([
+          dbGet('collezioni'),
+          dbGet('imballaggi'),
+          dbGet('prodotti'),
+        ])
+        if (cols.length > 0) { setCollezioni(cols); setActiveCol(cols[0].id) }
+        else { setCollezioni(COLLEZIONI_DEFAULT); setActiveCol(COLLEZIONI_DEFAULT[0]?.id) }
+        if (imbs.length > 0) setImballaggi(imbs)
+        else setImballaggi(IMBALLAGGI_DEFAULT)
+        if (prods.length > 0) setProdotti(prods)
+        else setProdotti(PRODOTTI_DEFAULT)
+        setErrore(null)
+      } catch (e) {
+        setErrore('Errore di connessione: ' + e.message)
+        setCollezioni(COLLEZIONI_DEFAULT)
+        setActiveCol(COLLEZIONI_DEFAULT[0]?.id)
+        setImballaggi(IMBALLAGGI_DEFAULT)
+        setProdotti(PRODOTTI_DEFAULT)
+      } finally {
+        setLoading(false)
+      }
+    }
+    carica()
+  }, [])
 
   const collezione = collezioni.find(c => c.id === activeCol)
 
   const tuttiMateriali = [
-    ...collezioni.flatMap(c => c.materiali.map(m => ({ ...m, _collezione: c.nome }))),
+    ...collezioni.flatMap(c => (c.materiali||[]).map(m => ({ ...m, _collezione: c.nome }))),
     ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
   ]
 
-function logout() {
-  onLogout()
-}
+  function logout() { onLogout() }
 
-  function salvaCollezione(data) {
+  async function salvaCollezione(data) {
     const esiste = collezioni.find(c => c.id === data.id)
-    if (esiste) setCollezioni(collezioni.map(c => c.id === data.id ? { ...c, ...data } : c))
-    else { setCollezioni([...collezioni, data]); setActiveCol(data.id) }
+    const nuove = esiste
+      ? collezioni.map(c => c.id === data.id ? { ...c, ...data } : c)
+      : [...collezioni, data]
+    setCollezioni(nuove)
+    setActiveCol(data.id)
+    await dbUpsert('collezioni', data)
     setModal(null)
   }
-  function eliminaCollezione(id) {
+  async function eliminaCollezione(id) {
     if (!confirm('Eliminare questa collezione?')) return
     const nuove = collezioni.filter(c => c.id !== id)
     setCollezioni(nuove)
-    if (activeCol === id) setActiveCol(nuove[0]?.id || null)
+    setActiveCol(nuove[0]?.id || null)
+    await dbDelete('collezioni', id)
   }
-  function salvaMateriale(data) {
-    setCollezioni(collezioni.map(c => {
-      if (c.id !== activeCol) return c
-      const esiste = c.materiali.find(m => m.id === data.id)
-      return { ...c, materiali: esiste ? c.materiali.map(m => m.id === data.id ? data : m) : [...c.materiali, data] }
-    }))
+  async function salvaMateriale(mat) {
+    const col = collezioni.find(c => c.id === activeCol)
+    if (!col) return
+    const esiste = (col.materiali || []).find(m => m.id === mat.id)
+    const nuoviMat = esiste
+      ? col.materiali.map(m => m.id === mat.id ? mat : m)
+      : [...(col.materiali || []), mat]
+    const colAggiornata = { ...col, materiali: nuoviMat }
+    setCollezioni(collezioni.map(c => c.id === activeCol ? colAggiornata : c))
+    await dbUpsert('collezioni', colAggiornata)
     setModal(null)
   }
-  function eliminaMateriale(id) {
-    setCollezioni(collezioni.map(c =>
-      c.id === activeCol ? { ...c, materiali: c.materiali.filter(m => m.id !== id) } : c
-    ))
+  async function eliminaMateriale(id) {
+    const col = collezioni.find(c => c.id === activeCol)
+    if (!col) return
+    const colAggiornata = { ...col, materiali: col.materiali.filter(m => m.id !== id) }
+    setCollezioni(collezioni.map(c => c.id === activeCol ? colAggiornata : c))
+    await dbUpsert('collezioni', colAggiornata)
   }
-  function salvaImballaggio(data) {
+  async function salvaImballaggio(data) {
     const esiste = imballaggi.find(m => m.id === data.id)
     setImballaggi(esiste ? imballaggi.map(m => m.id === data.id ? data : m) : [...imballaggi, data])
+    await dbUpsert('imballaggi', data)
     setModal(null)
   }
-  function eliminaImballaggio(id) { setImballaggi(imballaggi.filter(m => m.id !== id)) }
-  function salvaProdotto(data) {
+  async function eliminaImballaggio(id) {
+    setImballaggi(imballaggi.filter(m => m.id !== id))
+    await dbDelete('imballaggi', id)
+  }
+  async function salvaProdotto(data) {
     const esiste = prodotti.find(p => p.id === data.id)
     setProdotti(esiste ? prodotti.map(p => p.id === data.id ? data : p) : [...prodotti, data])
+    await dbUpsert('prodotti', data)
     setModal(null)
   }
-  function eliminaProdotto(id) {
+  async function eliminaProdotto(id) {
     if (!confirm('Eliminare questo prodotto?')) return
     setProdotti(prodotti.filter(p => p.id !== id))
+    await dbDelete('prodotti', id)
   }
-  function toggleVenduto(id) {
-    setProdotti(prodotti.map(p => {
-      if (p.id !== id) return p
-      const nuovoVenduto = !p.venduto
-      return { ...p, venduto: nuovoVenduto, dataVendita: nuovoVenduto ? Date.now() : null }
-    }))
+  async function toggleVenduto(id) {
+    const prod = prodotti.find(p => p.id === id)
+    if (!prod) return
+    const aggiornato = { ...prod, venduto: !prod.venduto, dataVendita: !prod.venduto ? Date.now() : null }
+    setProdotti(prodotti.map(p => p.id === id ? aggiornato : p))
+    await dbUpsert('prodotti', aggiornato)
   }
 
   const matFiltrati  = (collezione?.materiali || []).filter(m => !cerca || m.nome.toLowerCase().includes(cerca.toLowerCase()))
   const imbFiltrati  = imballaggi.filter(m => !cerca || m.nome.toLowerCase().includes(cerca.toLowerCase()))
   const prodFiltrati = prodotti.filter(p => !cerca || p.nome.toLowerCase().includes(cerca.toLowerCase()))
 
+  if (loading) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
+      <div style={{ fontFamily: 'var(--ff-display)', fontSize: 22, color: 'var(--text-3)' }}>Caricamento...</div>
+    </div>
+  )
+
+  if (errore) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', padding: 20 }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontFamily: 'var(--ff-display)', fontSize: 18, color: '#c04a4a', marginBottom: 12 }}>Errore di connessione</div>
+        <div style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 20 }}>{errore}</div>
+        <button onClick={() => window.location.reload()} style={{ padding: '10px 20px', borderRadius: 10, background: 'var(--accent)', color: '#fff', border: 'none', cursor: 'pointer' }}>Riprova</button>
+      </div>
+    </div>
+  )
+
   return (
     <div className="app-layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
           <div style={{ fontSize: 36, marginBottom: 12 }}>{APP_EMOJI}</div>
-          <div style={{ fontFamily: 'var(--ff-display)', fontSize: 22, fontWeight: 700, letterSpacing: -0.3, color: 'var(--text)' }}>
-            {APP_NAME}
-          </div>
-          <div style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: 2, textTransform: 'uppercase', marginTop: 6 }}>
-            {APP_TAGLINE}
-          </div>
+          <div style={{ fontFamily: 'var(--ff-display)', fontSize: 22, fontWeight: 700, letterSpacing: -0.3, color: 'var(--text)' }}>{APP_NAME}</div>
+          <div style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: 2, textTransform: 'uppercase', marginTop: 6 }}>{APP_TAGLINE}</div>
         </div>
-
         <nav className="sidebar-nav">
           {TABS.map(t => (
-            <button key={t.id}
-              className={`nav-item${tab === t.id ? ' active' : ''}`}
+            <button key={t.id} className={`nav-item${tab === t.id ? ' active' : ''}`}
               onClick={() => { setTab(t.id); setCerca('') }}>
               <span className="nav-emoji">{t.emoji}</span>
               {t.label}
             </button>
           ))}
         </nav>
-
         <div className="sidebar-footer">
           <button className="logout-btn" onClick={logout}>
             <span style={{ fontSize: 16 }}>🚪</span>
@@ -145,16 +228,16 @@ function logout() {
                 <div>
                   <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 32, fontWeight: 700, letterSpacing: -0.5 }}>{collezione.nome}</h1>
                   {collezione.descrizione && <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>{collezione.descrizione}</p>}
-                  <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>{collezione.materiali.length} materiali</p>
+                  <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>{(collezione.materiali||[]).length} materiali</p>
                 </div>
                 <div style={{ display: 'flex', gap: 7, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                  <Btn small outline onClick={() => setModal('accostamento')}>🎨 Abbina!</Btn>
+                  <Btn small outline onClick={() => setModal('accostamento')}>🎨 Abbina</Btn>
                   <Btn small outline onClick={() => { setTarget(collezione); setModal('editCol') }}>Modifica</Btn>
                   {collezioni.length > 1 && <Btn small outline color="var(--cat-fili)" onClick={() => eliminaCollezione(collezione.id)}>Elimina</Btn>}
                   <Btn small color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovoMat') }}>+ Materiale</Btn>
                 </div>
               </div>
-              {collezione.materiali.length > 3 && (
+              {(collezione.materiali||[]).length > 3 && (
                 <input value={cerca} onChange={e => setCerca(e.target.value)} placeholder="Cerca materiale..."
                   style={{ width: '100%', padding: '10px 16px', borderRadius: 'var(--r-pill)', border: '1.5px solid var(--border-s)', fontSize: 13, background: 'rgba(255,252,247,0.9)', outline: 'none', fontFamily: 'var(--ff-body)', boxSizing: 'border-box', marginBottom: 18 }} />
               )}
