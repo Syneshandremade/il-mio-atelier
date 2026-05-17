@@ -62,9 +62,10 @@ export default function App() {
     ...collezioni.flatMap(c => (c.materiali || []).map(m => ({ ...m, _collezione: c.nome }))),
     ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
   ]
-
-  async function logout() { await supabase.auth.signOut() }
-
+async function logout() {
+  await supabase.auth.signOut()
+  window.location.reload()
+}
   async function salvaCollezione(data) {
     await colDB.salva(data); setActiveCol(data.id); setModal(null)
   }
