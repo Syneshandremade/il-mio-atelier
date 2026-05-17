@@ -270,7 +270,7 @@ export default function AppContent({ onLogout }) {
             {collezione ? (<>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, gap: 10 }}>
                 <div>
-                  <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 32, fontWeight: 700, letterSpacing: -0.5 }}>{collezione.nome}</h1>
+                  <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 'clamp(18px, 5vw, 32px)', fontWeight: 700, letterSpacing: -0.5 }}>{collezione.nome}</h1>
                   {collezione.descrizione && <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>{collezione.descrizione}</p>}
                 </div>
                 <div style={{ display: 'flex', gap: 7, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
