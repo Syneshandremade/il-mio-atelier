@@ -59,7 +59,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 body { font-family: var(--ff-body); background: var(--bg); min-height: 100vh; color: var(--text); -webkit-font-smoothing: antialiased; font-weight: 300; }
-button { font-weight: 400; }
+button { font-weight: 400; text-transform: none; }
+.nav-label { text-transform: uppercase; letter-spacing: 1px; }
 h1, h2, h3 { font-weight: 600; }
 b, strong { font-weight: 500; }
 label { font-weight: 400; }
