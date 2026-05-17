@@ -273,7 +273,7 @@ export default function AppContent({ onLogout }) {
                   <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 'clamp(18px, 5vw, 32px)', fontWeight: 700, letterSpacing: -0.5 }}>{collezione.nome}</h1>
                   {collezione.descrizione && <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>{collezione.descrizione}</p>}
                 </div>
-                <div style={{ display: 'flex', gap: 7, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex', gap: 5, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '55%' }}>
                   <Btn small outline onClick={() => setModal('accostamento')}>🎨 Abbina</Btn>
                   <Btn small outline onClick={() => { setTarget(collezione); setModal('editCol') }}>Modifica</Btn>
                   {collezioni.length > 1 && <Btn small outline color="var(--cat-fili)" onClick={() => eliminaCollezione(collezione.id)}>Elimina</Btn>}
