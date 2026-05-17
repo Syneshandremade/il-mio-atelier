@@ -35,9 +35,10 @@ export default function AppContent() {
     ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
   ]
 
-  async function logout() {
-    await supabase.auth.signOut()
-  }
+  function logout() {
+  localStorage.removeItem('atelier-auth')
+  window.location.reload()
+}
 
   function salvaCollezione(data) {
     const esiste = collezioni.find(c => c.id === data.id)
