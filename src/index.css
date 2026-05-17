@@ -19,7 +19,6 @@
   --accent-warm:  #c4703a;
   --accent-soft:  #e8c89a;
 
-  /* Categorie materiali */
   --cat-filati:   #6e9a5e;
   --cat-perline:  #7378c0;
   --cat-fili:     #c07878;
@@ -27,7 +26,6 @@
   --cat-tessuti:  #5a8eaa;
   --cat-altro:    #9a7a6e;
 
-  /* Categorie imballaggi */
   --imb-scatole:   #b07840;
   --imb-sacchetti: #8e7ac0;
   --imb-carta:     #7a9e6e;
@@ -36,7 +34,6 @@
   --imb-sped:      #6e8e9e;
   --imb-altro:     #9a8a7a;
 
-  /* Categorie prodotti */
   --prod-borse:     #b07840;
   --prod-collane:   #7a7ec4;
   --prod-bracciali: #6e9a8e;
@@ -86,3 +83,130 @@ a:hover { text-decoration: underline; }
 .fade-up:nth-child(5) { animation-delay: 0.16s; }
 .fade-up:nth-child(6) { animation-delay: 0.20s; }
 .fade-up:nth-child(n+7) { animation-delay: 0.24s; }
+
+/* ── Layout sidebar ── */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  position: fixed;
+  top: 0; left: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+.sidebar-logo {
+  padding: 24px 20px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--r-m);
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--ff-body);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: all 0.18s;
+  letter-spacing: 0.2px;
+}
+
+.nav-item:hover { background: var(--surface-2); color: var(--text); }
+
+.nav-item.active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(44,36,25,0.18);
+}
+
+.nav-item .nav-emoji { font-size: 22px; flex-shrink: 0; }
+
+.sidebar-footer {
+  padding: 12px 12px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: var(--r-m);
+  border: none;
+  background: transparent;
+  color: var(--text-3);
+  font-family: var(--ff-body);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.18s;
+}
+.logout-btn:hover { background: var(--surface-2); color: var(--text-2); }
+
+.main-content {
+  margin-left: 230px;
+  flex: 1;
+  min-height: 100vh;
+}
+
+/* ── Mobile: barra in basso ── */
+@media (max-width: 640px) {
+  .sidebar {
+    width: 100%; height: auto;
+    top: auto; bottom: 0;
+    flex-direction: row;
+    border-right: none;
+    border-top: 1px solid var(--border);
+  }
+  .sidebar-logo   { display: none; }
+  .sidebar-footer { display: none; }
+  .sidebar-nav {
+    flex-direction: row;
+    padding: 6px 8px;
+    gap: 2px;
+    justify-content: space-around;
+    overflow-x: auto;
+  }
+  .nav-item {
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px 6px;
+    font-size: 10px;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    border-radius: var(--r-s);
+  }
+  .nav-item .nav-emoji { font-size: 20px; }
+  .main-content {
+    margin-left: 0;
+    padding-bottom: 80px;
+  }
+}
