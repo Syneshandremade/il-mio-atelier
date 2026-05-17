@@ -1,20 +1,37 @@
-import { useState, useEffect } from 'react'
-import { supabase } from './supabase'
-import Auth from './Auth'
 import AppContent from './AppContent'
 
+const PASSWORD = 'Tiche08052025!'
+
 export default function App() {
-  const [session, setSession] = useState(null)
-  const [ready,   setReady]   = useState(false)
-
-  useEffect(() => {
-    supabase.auth.onAuthStateChange((_e, session) => {
-      setSession(session)
-      setReady(true)
-    })
-  }, [])
-
-  if (!ready) return null
-  if (!session) return <Auth />
+  const ok = localStorage.getItem('atelier-auth') === 'ok'
+  if (!ok) return <Login />
   return <AppContent />
 }
+
+function Login() {
+  const [pwd, setPwd] = useState('')
+  const [err, setErr] = useState(false)
+
+  function entra() {
+    if (pwd === PASSWORD) {
+      localStorage.setItem('atelier-auth', 'ok')
+      window.location.reload()
+    } else {
+      setErr(true)
+    }
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(145deg, #f7f2eb, #e8dccb)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ background: '#fffcf7', borderRadius: 28, padding: '48px 36px', width: '100%', maxWidth: 380, boxShadow: '0 20px 60px rgba(0,0,0,0.12)', textAlign: 'center' }}>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>🪡</div>
+        <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 28, fontWeight: 700, marginBottom: 6 }}>Il Mio Atelier</h1>
+        <p style={{ fontSize: 11, color: 'var(--text-3)', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 32 }}>Materiali & Creazioni</p>
+        <input
+          type="password" value={pwd}
+          onChange={e => { setPwd(e.target.value); setErr(false) }}
+          onKeyDown={e => e.key === 'Enter' && entra()}
+          placeholder="Password"
+          style={{ width: '100%', padding: '13px 16px', borderRadius: 12, border: err ? '1.5px solid #c04a4a' : '1.5px solid var(--border-s)', fontSize: 15, fontFamily: 'var(--ff-body)', outline: 'none', boxSizing: 'border-box', marginBottom: 12, textAlign: 'center', letterSpacing: 4 }}
+        />
+        {err && <p style={{ fontSize: 12, color: '#c04a4a', marginBottom: 12 }}>Password e
