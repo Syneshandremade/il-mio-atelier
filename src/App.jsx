@@ -13,10 +13,10 @@ import AnalisiDashboard  from './components/AnalisiDashboard'
 import { Btn }           from './components/ui'
 
 const TABS = [
-  { id: 'materiali',  label: '🧶 Materiali'  },
-  { id: 'imballaggi', label: '📦 Imballaggi' },
-  { id: 'prodotti',   label: '👜 Prodotti'   },
-  { id: 'analisi',    label: '📊 Analisi'    },
+  { id: 'materiali',  emoji: '🧶', label: 'Materiali'  },
+  { id: 'imballaggi', emoji: '📦', label: 'Imballaggi' },
+  { id: 'prodotti',   emoji: '👜', label: 'Prodotti'   },
+  { id: 'analisi',    emoji: '📊', label: 'Analisi'    },
 ]
 
 export default function App() {
@@ -69,7 +69,6 @@ export default function App() {
     await colDB.elimina(id)
     setActiveCol(collezioni.filter(c => c.id !== id)[0]?.id || null)
   }
-
   async function salvaMateriale(mat) {
     const col = collezioni.find(c => c.id === activeCol)
     if (!col) return
@@ -85,10 +84,8 @@ export default function App() {
     if (!col) return
     await colDB.salva({ ...col, materiali: col.materiali.filter(m => m.id !== id) })
   }
-
   async function salvaImballaggio(data) { await imbDB.salva(data); setModal(null) }
   async function eliminaImballaggio(id) { await imbDB.elimina(id) }
-
   async function salvaProdotto(data) { await prodDB.salva(data); setModal(null) }
   async function eliminaProdotto(id) {
     if (!confirm('Eliminare questo prodotto?')) return
@@ -107,7 +104,7 @@ export default function App() {
 
   if (authLoad) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
-      <div style={{ fontFamily: 'var(--ff-display)', fontSize: 22, color: 'var(--text-3)' }}>🪡 Caricamento…</div>
+      <div style={{ fontFamily: 'var(--ff-display)', fontSize: 22, color: 'var(--text-3)' }}>Caricamento...</div>
     </div>
   )
 
@@ -115,112 +112,124 @@ export default function App() {
 
   if (colDB.loading || imbDB.loading || prodDB.loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
-      <div style={{ fontFamily: 'var(--ff-display)', fontSize: 22, color: 'var(--text-3)' }}>🪡 Caricamento dati…</div>
+      <div style={{ fontFamily: 'var(--ff-display)', fontSize: 22, color: 'var(--text-3)' }}>Caricamento dati...</div>
     </div>
   )
 
   return (
-    <div style={{ minHeight: '100vh' }}>
-      <header style={{
-        background: 'var(--surface)', backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid var(--border)', padding: '14px 20px',
-        position: 'sticky', top: 0, zIndex: 50,
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap',
-      }}>
-        <div>
-          <div style={{ fontFamily: 'var(--ff-display)', fontSize: 22, fontWeight: 700, letterSpacing: -0.3 }}>{APP_EMOJI} {APP_NAME}</div>
-          <div style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: 1.8, textTransform: 'uppercase', marginTop: 1 }}>{APP_TAGLINE}</div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <nav style={{ display: 'flex', gap: 3, background: 'var(--surface-2)', borderRadius: 'var(--r-pill)', padding: 3 }}>
-            {TABS.map(t => (
-              <button key={t.id} onClick={() => { setTab(t.id); setCerca('') }}
-                style={{ padding: '7px 12px', borderRadius: 'var(--r-pill)', border: 'none', fontSize: 12, fontWeight: 700, background: tab === t.id ? 'var(--surface-s)' : 'transparent', color: tab === t.id ? 'var(--accent)' : 'var(--text-3)', boxShadow: tab === t.id ? 'var(--shadow-s)' : 'none', transition: 'all 0.18s', cursor: 'pointer', whiteSpace: 'nowrap' }}>{t.label}</button>
-            ))}
-          </nav>
-          <button onClick={logout} style={{ background: 'var(--surface-2)', border: 'none', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: 'var(--text-3)', cursor: 'pointer', fontWeight: 700 }}>Esci</button>
-        </div>
-      </header>
-
-      <main style={{ padding: '20px 16px', maxWidth: 800, margin: '0 auto' }}>
-
-        {tab === 'materiali' && (<>
-          <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 6, marginBottom: 20 }}>
-            {collezioni.map(c => (
-              <button key={c.id} onClick={() => { setActiveCol(c.id); setCerca('') }}
-                style={{ flexShrink: 0, padding: '8px 16px', borderRadius: 'var(--r-pill)', border: activeCol === c.id ? 'none' : '1.5px solid var(--border-s)', background: activeCol === c.id ? c.colore : 'rgba(255,252,247,0.7)', color: activeCol === c.id ? '#fff' : 'var(--text-2)', fontWeight: 700, fontSize: 13, boxShadow: activeCol === c.id ? `0 4px 14px ${c.colore}55` : 'none', transition: 'all 0.18s' }}>{c.nome}</button>
-            ))}
-            <button onClick={() => { setTarget(null); setModal('nuovaCol') }}
-              style={{ flexShrink: 0, padding: '8px 16px', borderRadius: 'var(--r-pill)', border: '1.5px dashed var(--border-s)', background: 'none', color: 'var(--text-3)', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>+ Collezione</button>
+    <div className="app-layout">
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <div style={{ fontFamily: 'var(--ff-display)', fontSize: 20, fontWeight: 700, letterSpacing: -0.3 }}>
+            {APP_EMOJI} {APP_NAME}
           </div>
+          <div style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: 1.6, textTransform: 'uppercase', marginTop: 3 }}>
+            {APP_TAGLINE}
+          </div>
+        </div>
+        <nav className="sidebar-nav">
+          {TABS.map(t => (
+            <button key={t.id} className={`nav-item${tab === t.id ? ' active' : ''}`}
+              onClick={() => { setTab(t.id); setCerca('') }}>
+              <span className="nav-emoji">{t.emoji}</span>
+              {t.label}
+            </button>
+          ))}
+        </nav>
+        <div className="sidebar-footer">
+          <button className="logout-btn" onClick={logout}>
+            <span style={{ fontSize: 18 }}>🚪</span>
+            Esci
+          </button>
+        </div>
+      </aside>
 
-          {collezione ? (<>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18, gap: 10 }}>
-              <div>
-                <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 28, fontWeight: 700, letterSpacing: -0.5 }}>{collezione.nome}</h1>
-                {collezione.descrizione && <p style={{ fontSize: 14, color: 'var(--text-3)', marginTop: 4 }}>{collezione.descrizione}</p>}
-                <p style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>{(collezione.materiali||[]).length} materiali</p>
-              </div>
-              <div style={{ display: 'flex', gap: 7, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                <Btn small outline onClick={() => setModal('accostamento')}>🎨 Accostamenti</Btn>
-                <Btn small outline onClick={() => { setTarget(collezione); setModal('editCol') }}>✏️</Btn>
-                {collezioni.length > 1 && <Btn small outline color="var(--cat-fili)" onClick={() => eliminaCollezione(collezione.id)}>🗑</Btn>}
-                <Btn small color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovoMat') }}>+ Materiale</Btn>
-              </div>
+      <main className="main-content">
+        <div style={{ padding: '28px 24px', maxWidth: 780, margin: '0 auto' }}>
+
+          {tab === 'materiali' && (<>
+            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 6, marginBottom: 22 }}>
+              {collezioni.map(c => (
+                <button key={c.id} onClick={() => { setActiveCol(c.id); setCerca('') }}
+                  style={{ flexShrink: 0, padding: '8px 18px', borderRadius: 'var(--r-pill)', border: activeCol === c.id ? 'none' : '1.5px solid var(--border-s)', background: activeCol === c.id ? c.colore : 'rgba(255,252,247,0.7)', color: activeCol === c.id ? '#fff' : 'var(--text-2)', fontWeight: 700, fontSize: 13, boxShadow: activeCol === c.id ? `0 4px 14px ${c.colore}55` : 'none', transition: 'all 0.18s', cursor: 'pointer' }}>
+                  {c.nome}
+                </button>
+              ))}
+              <button onClick={() => { setTarget(null); setModal('nuovaCol') }}
+                style={{ flexShrink: 0, padding: '8px 18px', borderRadius: 'var(--r-pill)', border: '1.5px dashed var(--border-s)', background: 'none', color: 'var(--text-3)', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+                + Collezione
+              </button>
             </div>
-            {(collezione.materiali||[]).length > 3 && (
-              <input value={cerca} onChange={e => setCerca(e.target.value)} placeholder="🔍 Cerca materiale…"
-                style={{ width: '100%', padding: '10px 16px', borderRadius: 'var(--r-pill)', border: '1.5px solid var(--border-s)', fontSize: 14, background: 'rgba(255,252,247,0.9)', outline: 'none', fontFamily: 'var(--ff-body)', boxSizing: 'border-box', marginBottom: 16 }} />
+
+            {collezione ? (<>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20, gap: 10 }}>
+                <div>
+                  <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 30, fontWeight: 700, letterSpacing: -0.5 }}>{collezione.nome}</h1>
+                  {collezione.descrizione && <p style={{ fontSize: 14, color: 'var(--text-3)', marginTop: 4 }}>{collezione.descrizione}</p>}
+                  <p style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>{(collezione.materiali||[]).length} materiali</p>
+                </div>
+                <div style={{ display: 'flex', gap: 7, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <Btn small outline onClick={() => setModal('accostamento')}>Accostamenti</Btn>
+                  <Btn small outline onClick={() => { setTarget(collezione); setModal('editCol') }}>Modifica</Btn>
+                  {collezioni.length > 1 && <Btn small outline color="var(--cat-fili)" onClick={() => eliminaCollezione(collezione.id)}>Elimina</Btn>}
+                  <Btn small color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovoMat') }}>+ Materiale</Btn>
+                </div>
+              </div>
+              {(collezione.materiali||[]).length > 3 && (
+                <input value={cerca} onChange={e => setCerca(e.target.value)} placeholder="Cerca materiale..."
+                  style={{ width: '100%', padding: '10px 16px', borderRadius: 'var(--r-pill)', border: '1.5px solid var(--border-s)', fontSize: 14, background: 'rgba(255,252,247,0.9)', outline: 'none', fontFamily: 'var(--ff-body)', boxSizing: 'border-box', marginBottom: 18 }} />
+              )}
+              {matFiltrati.length === 0
+                ? <EmptyState icon="X" title={cerca ? 'Nessun risultato' : 'Nessun materiale'} cta={!cerca && <Btn color="var(--accent)" onClick={() => setModal('nuovoMat')}>+ Aggiungi il primo materiale</Btn>} />
+                : <Grid>{matFiltrati.map(m => <MaterialeCard key={m.id} mat={m} onEdit={m => { setTarget(m); setModal('editMat') }} onDelete={eliminaMateriale} />)}</Grid>
+              }
+            </>) : (
+              <EmptyState icon="X" title="Crea la tua prima collezione!" cta={<Btn color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovaCol') }}>+ Crea collezione</Btn>} />
             )}
-            {matFiltrati.length === 0
-              ? <EmptyState icon="🧵" title={cerca ? 'Nessun risultato' : 'Nessun materiale'} cta={!cerca && <Btn color="var(--accent)" onClick={() => setModal('nuovoMat')}>+ Aggiungi il primo materiale</Btn>} />
-              : <Grid>{matFiltrati.map(m => <MaterialeCard key={m.id} mat={m} onEdit={m => { setTarget(m); setModal('editMat') }} onDelete={eliminaMateriale} />)}</Grid>
+          </>)}
+
+          {tab === 'imballaggi' && (<>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20, gap: 10 }}>
+              <div>
+                <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 30, fontWeight: 700, letterSpacing: -0.5 }}>Imballaggi e Spedizione</h1>
+                <p style={{ fontSize: 14, color: 'var(--text-3)', marginTop: 4 }}>Scatole, sacchetti, nastri, etichette...</p>
+                <p style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>{imballaggi.length} articoli</p>
+              </div>
+              <Btn color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovoImb') }}>+ Articolo</Btn>
+            </div>
+            {imballaggi.length > 3 && (
+              <input value={cerca} onChange={e => setCerca(e.target.value)} placeholder="Cerca articolo..."
+                style={{ width: '100%', padding: '10px 16px', borderRadius: 'var(--r-pill)', border: '1.5px solid var(--border-s)', fontSize: 14, background: 'rgba(255,252,247,0.9)', outline: 'none', fontFamily: 'var(--ff-body)', boxSizing: 'border-box', marginBottom: 18 }} />
+            )}
+            {imbFiltrati.length === 0
+              ? <EmptyState icon="X" title="Nessun articolo ancora" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoImb')}>+ Aggiungi il primo articolo</Btn>} />
+              : <Grid>{imbFiltrati.map(m => <MaterialeCard key={m.id} mat={m} catOverride={CAT_IMBALLAGGI} onEdit={m => { setTarget(m); setModal('editImb') }} onDelete={eliminaImballaggio} />)}</Grid>
             }
-          </>) : (
-            <EmptyState icon="🪡" title="Crea la tua prima collezione!" cta={<Btn color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovaCol') }}>+ Crea collezione</Btn>} />
-          )}
-        </>)}
+          </>)}
 
-        {tab === 'imballaggi' && (<>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18, gap: 10 }}>
-            <div>
-              <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 28, fontWeight: 700, letterSpacing: -0.5 }}>Imballaggi & Spedizione</h1>
-              <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>Scatole, sacchetti, nastri, etichette…</p>
-              <p style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>{imballaggi.length} articoli</p>
+          {tab === 'prodotti' && (<>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, gap: 10 }}>
+              <div>
+                <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 30, fontWeight: 700, letterSpacing: -0.5 }}>I miei prodotti</h1>
+                <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>{prodotti.filter(p=>p.venduto).length} venduti · {prodotti.filter(p=>!p.venduto).length} in stock</p>
+              </div>
+              <Btn color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovoProd') }}>+ Prodotto</Btn>
             </div>
-            <Btn color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovoImb') }}>+ Articolo</Btn>
-          </div>
-          {imballaggi.length > 3 && (
-            <input value={cerca} onChange={e => setCerca(e.target.value)} placeholder="🔍 Cerca articolo…"
-              style={{ width: '100%', padding: '10px 16px', borderRadius: 'var(--r-pill)', border: '1.5px solid var(--border-s)', fontSize: 14, background: 'rgba(255,252,247,0.9)', outline: 'none', fontFamily: 'var(--ff-body)', boxSizing: 'border-box', marginBottom: 16 }} />
-          )}
-          {imbFiltrati.length === 0
-            ? <EmptyState icon="📦" title="Nessun articolo ancora" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoImb')}>+ Aggiungi il primo articolo</Btn>} />
-            : <Grid>{imbFiltrati.map(m => <MaterialeCard key={m.id} mat={m} catOverride={CAT_IMBALLAGGI} onEdit={m => { setTarget(m); setModal('editImb') }} onDelete={eliminaImballaggio} />)}</Grid>
-          }
-        </>)}
+            {prodotti.length > 3 && (
+              <input value={cerca} onChange={e => setCerca(e.target.value)} placeholder="Cerca prodotto..."
+                style={{ width: '100%', padding: '10px 16px', borderRadius: 'var(--r-pill)', border: '1.5px solid var(--border-s)', fontSize: 14, background: 'rgba(255,252,247,0.9)', outline: 'none', fontFamily: 'var(--ff-body)', boxSizing: 'border-box', marginBottom: 18 }} />
+            )}
+            {prodFiltrati.length === 0
+              ? <EmptyState icon="X" title="Nessun prodotto ancora" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoProd')}>+ Aggiungi il primo prodotto</Btn>} />
+              : <Grid>{prodFiltrati.map(p => <ProdottoCard key={p.id} prod={p} onEdit={p => { setTarget(p); setModal('editProd') }} onDelete={eliminaProdotto} onToggleVenduto={toggleVenduto} />)}</Grid>
+            }
+          </>)}
 
-        {tab === 'prodotti' && (<>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, gap: 10 }}>
-            <div>
-              <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 28, fontWeight: 700, letterSpacing: -0.5 }}>I miei prodotti</h1>
-              <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>{prodotti.filter(p=>p.venduto).length} venduti · {prodotti.filter(p=>!p.venduto).length} in stock</p>
-            </div>
-            <Btn color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovoProd') }}>+ Prodotto</Btn>
-          </div>
-          {prodotti.length > 3 && (
-            <input value={cerca} onChange={e => setCerca(e.target.value)} placeholder="🔍 Cerca prodotto…"
-              style={{ width: '100%', padding: '10px 16px', borderRadius: 'var(--r-pill)', border: '1.5px solid var(--border-s)', fontSize: 14, background: 'rgba(255,252,247,0.9)', outline: 'none', fontFamily: 'var(--ff-body)', boxSizing: 'border-box', marginBottom: 16 }} />
+          {tab === 'analisi' && (
+            <AnalisiDashboard collezioni={collezioni} prodotti={prodotti} imballaggi={imballaggi} />
           )}
-          {prodFiltrati.length === 0
-            ? <EmptyState icon="👜" title="Nessun prodotto ancora" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoProd')}>+ Aggiungi il primo prodotto</Btn>} />
-            : <Grid>{prodFiltrati.map(p => <ProdottoCard key={p.id} prod={p} onEdit={p => { setTarget(p); setModal('editProd') }} onDelete={eliminaProdotto} onToggleVenduto={toggleVenduto} />)}</Grid>
-          }
-        </>)}
 
-        {tab === 'analisi' && (
-          <AnalisiDashboard collezioni={collezioni} prodotti={prodotti} imballaggi={imballaggi} />
-        )}
+        </div>
       </main>
 
       {(modal === 'nuovaCol' || modal === 'editCol') && (
@@ -254,7 +263,7 @@ function EmptyState({ icon, title, cta }) {
 
 function Grid({ children }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
       {children}
     </div>
   )
