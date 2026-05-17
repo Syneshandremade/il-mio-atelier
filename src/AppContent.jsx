@@ -435,7 +435,7 @@ function EmptyState({ icon, title, cta }) {
 
 function Grid({ children }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 16 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12 }}>
       {children}
     </div>
   )
