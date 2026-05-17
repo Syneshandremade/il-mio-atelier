@@ -44,9 +44,9 @@ export default function App() {
 
   const userId = session?.user?.id
 
-  const colDB  = useSupabaseData('collezioni', [], userId)
-  const imbDB  = useSupabaseData('imballaggi', [], userId)
-  const prodDB = useSupabaseData('prodotti',   [], userId)
+  const colDB  = useSupabaseData('collezioni', userId)
+const imbDB  = useSupabaseData('imballaggi', userId)
+const prodDB = useSupabaseData('prodotti',   userId)
 
   const collezioni = colDB.data
   const imballaggi = imbDB.data
