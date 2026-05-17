@@ -21,7 +21,7 @@ const TABS = [
 
 export default function App() {
   const [session,   setSession]   = useState(null)
-  const [authLoad,  setAuthLoad]  = useState(true)
+  const [authLoad,  setAuthLoad]  = useState(false)
   const [tab,       setTab]       = useState('materiali')
   const [activeCol, setActiveCol] = useState(null)
   const [modal,     setModal]     = useState(null)
