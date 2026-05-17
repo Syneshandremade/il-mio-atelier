@@ -180,6 +180,7 @@ a:hover { text-decoration: underline; }
   transition: all 0.18s;
 }
 .logout-btn:hover { background: var(--surface-2); color: var(--text-2); }
+.logout-btn { cursor: pointer; }
 
 .main-content {
   margin-left: 230px;
