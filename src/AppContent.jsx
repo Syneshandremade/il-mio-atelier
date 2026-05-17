@@ -18,7 +18,7 @@ const TABS = [
   { id: 'analisi',    emoji: '📊', label: 'ANALISI'    },
 ]
 
-export default function AppContent() {
+export default function AppContent({ onLogout }) {
   const [collezioni, setCollezioni] = useStorage('atelier-v3-collezioni', COLLEZIONI_DEFAULT)
   const [imballaggi, setImballaggi] = useStorage('atelier-v3-imballaggi', IMBALLAGGI_DEFAULT)
   const [prodotti,   setProdotti]   = useStorage('atelier-v3-prodotti',   PRODOTTI_DEFAULT)
