@@ -193,7 +193,9 @@ export default function AppContent({ onLogout }) {
     await dbUpsert('prodotti', aggiornato)
   }
 
-  const matFiltrati  = (collezione?.materiali || []).filter(m => !cerca || m.nome.toLowerCase().includes(cerca.toLowerCase()))
+  const matFiltrati = (collezione?.materiali || []).filter(m =>
+  !cerca || m.categoria === cerca || m.nome.toLowerCase().includes(cerca.toLowerCase())
+)
   const imbFiltrati  = imballaggi.filter(m => !cerca || m.nome.toLowerCase().includes(cerca.toLowerCase()))
   const prodFiltrati = prodotti.filter(p => !cerca || p.nome.toLowerCase().includes(cerca.toLowerCase()))
 
