@@ -1,0 +1,101 @@
+/* ══════════════════════════════════════════
+   IL MIO ATELIER v2 — Design System
+   Modifica le variabili in :root per
+   personalizzare tutta l'interfaccia!
+   ══════════════════════════════════════════ */
+
+:root {
+  /* Sfondi */
+  --bg:           #f7f2eb;
+  --bg-2:         #efe8dc;
+  --surface:      rgba(255, 252, 247, 0.94);
+  --surface-s:    #fffcf7;
+  --surface-2:    #f2ece2;
+
+  /* Bordi */
+  --border:       rgba(0,0,0,0.07);
+  --border-s:     #ddd5c8;
+
+  /* Testo */
+  --text:         #1e1a16;
+  --text-2:       #6b5f52;
+  --text-3:       #a8998a;
+
+  /* Accenti */
+  --accent:       #2c2419;
+  --accent-warm:  #c4703a;
+  --accent-soft:  #e8c89a;
+
+  /* Categorie materiali */
+  --cat-filati:   #6e9a5e;
+  --cat-perline:  #7378c0;
+  --cat-fili:     #c07878;
+  --cat-fermagli: #c4a44a;
+  --cat-tessuti:  #5a8eaa;
+  --cat-altro:    #9a7a6e;
+
+  /* Categorie prodotti */
+  --prod-borse:   #b07840;
+  --prod-collane: #7a7ec4;
+  --prod-bracciali:#6e9a8e;
+  --prod-orecchini:#c0786e;
+  --prod-altro:   #8e8e8e;
+
+  /* Font */
+  --ff-display: 'Cormorant Garamond', Georgia, serif;
+  --ff-body:    'DM Sans', system-ui, sans-serif;
+
+  /* Raggi */
+  --r-s:   8px;
+  --r-m:   14px;
+  --r-l:   20px;
+  --r-xl:  28px;
+  --r-pill:40px;
+
+  /* Ombre */
+  --shadow-s: 0 2px 8px rgba(0,0,0,0.07);
+  --shadow-m: 0 6px 24px rgba(0,0,0,0.10);
+  --shadow-l: 0 16px 48px rgba(0,0,0,0.14);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--ff-body);
+  background: var(--bg);
+  min-height: 100vh;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: var(--ff-body); cursor: pointer; }
+button:active { transform: scale(0.97); }
+input, textarea, select { font-family: var(--ff-body); }
+img { display: block; max-width: 100%; }
+a { color: var(--accent-warm); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border-s); border-radius: 4px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.fade-up { animation: fadeUp 0.28s ease both; }
+
+/* Stagger per le card */
+.fade-up:nth-child(1) { animation-delay: 0.00s; }
+.fade-up:nth-child(2) { animation-delay: 0.04s; }
+.fade-up:nth-child(3) { animation-delay: 0.08s; }
+.fade-up:nth-child(4) { animation-delay: 0.12s; }
+.fade-up:nth-child(5) { animation-delay: 0.16s; }
+.fade-up:nth-child(6) { animation-delay: 0.20s; }
+.fade-up:nth-child(n+7) { animation-delay: 0.24s; }
