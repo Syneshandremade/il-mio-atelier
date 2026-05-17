@@ -1,27 +1,20 @@
 /* ══════════════════════════════════════════
-   IL MIO ATELIER v2 — Design System
-   Modifica le variabili in :root per
-   personalizzare tutta l'interfaccia!
+   IL MIO ATELIER — Design System
    ══════════════════════════════════════════ */
 
 :root {
-  /* Sfondi */
   --bg:           #f7f2eb;
   --bg-2:         #efe8dc;
   --surface:      rgba(255, 252, 247, 0.94);
   --surface-s:    #fffcf7;
   --surface-2:    #f2ece2;
-
-  /* Bordi */
   --border:       rgba(0,0,0,0.07);
   --border-s:     #ddd5c8;
 
-  /* Testo */
   --text:         #1e1a16;
   --text-2:       #6b5f52;
   --text-3:       #a8998a;
 
-  /* Accenti */
   --accent:       #2c2419;
   --accent-warm:  #c4703a;
   --accent-soft:  #e8c89a;
@@ -34,49 +27,45 @@
   --cat-tessuti:  #5a8eaa;
   --cat-altro:    #9a7a6e;
 
-  /* Categorie prodotti */
-  --prod-borse:   #b07840;
-  --prod-collane: #7a7ec4;
-  --prod-bracciali:#6e9a8e;
-  --prod-orecchini:#c0786e;
-  --prod-altro:   #8e8e8e;
+  /* Categorie imballaggi */
+  --imb-scatole:   #b07840;
+  --imb-sacchetti: #8e7ac0;
+  --imb-carta:     #7a9e6e;
+  --imb-nastri:    #c07878;
+  --imb-etich:     #5a8eaa;
+  --imb-sped:      #6e8e9e;
+  --imb-altro:     #9a8a7a;
 
-  /* Font */
+  /* Categorie prodotti */
+  --prod-borse:     #b07840;
+  --prod-collane:   #7a7ec4;
+  --prod-bracciali: #6e9a8e;
+  --prod-orecchini: #c0786e;
+  --prod-altro:     #8e8e8e;
+
   --ff-display: 'Cormorant Garamond', Georgia, serif;
   --ff-body:    'DM Sans', system-ui, sans-serif;
 
-  /* Raggi */
   --r-s:   8px;
   --r-m:   14px;
   --r-l:   20px;
   --r-xl:  28px;
   --r-pill:40px;
 
-  /* Ombre */
   --shadow-s: 0 2px 8px rgba(0,0,0,0.07);
   --shadow-m: 0 6px 24px rgba(0,0,0,0.10);
   --shadow-l: 0 16px 48px rgba(0,0,0,0.14);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { font-size: 16px; -webkit-text-size-adjust: 100%; }
-
-body {
-  font-family: var(--ff-body);
-  background: var(--bg);
-  min-height: 100vh;
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
-}
-
+body { font-family: var(--ff-body); background: var(--bg); min-height: 100vh; color: var(--text); -webkit-font-smoothing: antialiased; }
 button { font-family: var(--ff-body); cursor: pointer; }
 button:active { transform: scale(0.97); }
 input, textarea, select { font-family: var(--ff-body); }
 img { display: block; max-width: 100%; }
 a { color: var(--accent-warm); text-decoration: none; }
 a:hover { text-decoration: underline; }
-
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-thumb { background: var(--border-s); border-radius: 4px; }
 
@@ -90,8 +79,6 @@ a:hover { text-decoration: underline; }
 }
 
 .fade-up { animation: fadeUp 0.28s ease both; }
-
-/* Stagger per le card */
 .fade-up:nth-child(1) { animation-delay: 0.00s; }
 .fade-up:nth-child(2) { animation-delay: 0.04s; }
 .fade-up:nth-child(3) { animation-delay: 0.08s; }
