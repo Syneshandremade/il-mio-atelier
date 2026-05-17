@@ -220,11 +220,12 @@ export default function AppContent({ onLogout }) {
 
       {/* Header mobile — solo su smartphone */}
       <div className={`mobile-header${headerNascosto ? ' nascosto' : ''}`}>
-        <div style={{ fontSize: 20 }}>{APP_EMOJI}</div>
-        <div style={{ fontFamily: 'var(--ff-display)', fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>{APP_NAME}</div>
-        <div style={{ fontSize: 9, color: 'var(--text-3)', letterSpacing: 2, textTransform: 'uppercase', marginTop: 2 }}>{APP_TAGLINE}</div>
-      </div>
-
+  <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+    <div style={{ fontSize: 20 }}>{APP_EMOJI}</div>
+    <div style={{ fontFamily: 'var(--ff-display)', fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>{APP_NAME}</div>
+    <div style={{ fontSize: 9, color: 'var(--text-3)', letterSpacing: 2, textTransform: 'uppercase', marginTop: 2 }}>{APP_TAGLINE}</div>
+  </div>
+</div>
       <aside className="sidebar">
         <div className="sidebar-logo">
           <div style={{ fontSize: 36, marginBottom: 12 }}>{APP_EMOJI}</div>
