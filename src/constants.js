@@ -10,9 +10,9 @@ export const APP_EMOJI   = '🪡'
 export const CAT_MATERIALI = [
   { id: 'filati',   label: 'Filati',         emoji: '🧶', cssVar: 'var(--cat-filati)'   },
   { id: 'perline',  label: 'Perline',         emoji: '📿', cssVar: 'var(--cat-perline)'  },
-  { id: 'fili',     label: 'Fili gioielli',   emoji: '✨', cssVar: 'var(--cat-fili)'     },
-  { id: 'fermagli', label: 'Fermagli',        emoji: '🔗', cssVar: 'var(--cat-fermagli)' },
-  { id: 'tessuti',  label: 'Tessuti/Rafia',   emoji: '🌿', cssVar: 'var(--cat-tessuti)'  },
+  { id: 'fili',     label: 'Charms',   emoji: '✨', cssVar: 'var(--cat-fili)'     },
+  { id: 'fermagli', label: 'Minuteria',        emoji: '🔗', cssVar: 'var(--cat-fermagli)' },
+  { id: 'tessuti',  label: 'Tessuti',   emoji: '🌿', cssVar: 'var(--cat-tessuti)'  },
   { id: 'altro',    label: 'Altro',           emoji: '📦', cssVar: 'var(--cat-altro)'    },
 ]
 
