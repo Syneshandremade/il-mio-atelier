@@ -105,8 +105,12 @@ a:hover { text-decoration: underline; }
 }
 
 .sidebar-logo {
-  padding: 24px 20px 18px;
+  padding: 36px 24px 28px;
   border-bottom: 1px solid var(--border);
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .sidebar-nav {
