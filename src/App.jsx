@@ -52,9 +52,7 @@ export default function App() {
   const imballaggi = imbDB.data
   const prodotti   = prodDB.data
 
-  useEffect(() => {
-    if (!activeCol && collezioni.length > 0) setActiveCol(collezioni[0].id)
-  }, [collezioni, activeCol])
+  
 
   const collezione = collezioni.find(c => c.id === activeCol)
 
