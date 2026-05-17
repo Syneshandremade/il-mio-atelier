@@ -60,7 +60,8 @@ export default function App() {
     ...collezioni.flatMap(c => c.materiali.map(m => ({ ...m, _collezione: c.nome }))),
     ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
   ]
-
+if (authLoad) return null
+if (!session) return <Auth />
   async function logout() {
     await supabase.auth.signOut()
   }
