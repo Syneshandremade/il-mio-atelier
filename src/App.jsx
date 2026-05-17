@@ -123,7 +123,7 @@ export default function App() {
                 color: tab === t.id ? 'var(--accent)' : 'var(--text-3)',
                 boxShadow: tab === t.id ? 'var(--shadow-s)' : 'none',
                 transition: 'all 0.18s', cursor: 'pointer', whiteSpace: 'nowrap',
-              }}>{t.label}</button>
+              }}><span className="nav-label">{t.label}</span></button>
           ))}
         </nav>
       </header>
