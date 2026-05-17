@@ -35,9 +35,8 @@ export default function AppContent({ onLogout }) {
     ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
   ]
 
- function logout() {
-  localStorage.clear()
-  window.location.href = window.location.href
+function logout() {
+  onLogout()
 }
 
   function salvaCollezione(data) {
