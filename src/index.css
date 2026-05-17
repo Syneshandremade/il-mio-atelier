@@ -188,6 +188,12 @@ a:hover { text-decoration: underline; }
 }
 
 /* ── Mobile: barra in basso ── */
+@media (max-width: 900px) and (min-width: 641px) {
+  .sidebar { width: 180px; }
+  .main-content { margin-left: 180px; }
+  .nav-item { padding: 14px 14px; font-size: 11px; }
+  .sidebar-logo { padding: 28px 14px 22px; }
+}
 @media (max-width: 640px) {
   .sidebar {
     width: 100%; height: auto;
