@@ -149,7 +149,7 @@ a:hover { text-decoration: underline; }
   box-shadow: 0 4px 16px rgba(44,36,25,0.18);
 }
 
-.nav-item .nav-emoji { font-size: 22px; flex-shrink: 0; }
+.nav-item .nav-emoji { font-size: 24px; flex-shrink: 0; }
 
 .sidebar-footer {
   padding: 12px 12px 20px;
