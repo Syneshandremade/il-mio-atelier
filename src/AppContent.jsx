@@ -35,9 +35,9 @@ export default function AppContent() {
     ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
   ]
 
-  function logout() {
-  localStorage.removeItem('atelier-auth')
-  window.location.reload()
+ function logout() {
+  localStorage.clear()
+  window.location.href = window.location.href
 }
 
   function salvaCollezione(data) {
