@@ -24,18 +24,27 @@ export default function App() {
   const [authLoad, setAuthLoad] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setAuthLoad(false)
-    }).catch(() => setAuthLoad(false))
+  const timer = setTimeout(() => setAuthLoad(false), 3000)
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setSession(session)
-      setAuthLoad(false)
-    })
-    return () => subscription.unsubscribe()
-  }, [])
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    clearTimeout(timer)
+    setSession(session)
+    setAuthLoad(false)
+  }).catch(() => {
+    clearTimeout(timer)
+    setAuthLoad(false)
+  })
 
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+    clearTimeout(timer)
+    setSession(session)
+    setAuthLoad(false)
+  })
+  return () => {
+    clearTimeout(timer)
+    subscription.unsubscribe()
+  }
+}, [])
   const [collezioni, setCollezioni] = useStorage('atelier-v3-collezioni', COLLEZIONI_DEFAULT)
   const [imballaggi, setImballaggi] = useStorage('atelier-v3-imballaggi', IMBALLAGGI_DEFAULT)
   const [prodotti,   setProdotti]   = useStorage('atelier-v3-prodotti',   PRODOTTI_DEFAULT)
