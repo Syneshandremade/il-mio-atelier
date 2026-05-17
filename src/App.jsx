@@ -169,7 +169,7 @@ export default function App() {
                   <p style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>{(collezione.materiali||[]).length} materiali</p>
                 </div>
                 <div style={{ display: 'flex', gap: 7, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                  <Btn small outline onClick={() => setModal('accostamento')}>Accostamenti</Btn>
+                  <Btn small outline onClick={() => setModal('accostamento')}>🎨Abbina!</Btn>
                   <Btn small outline onClick={() => { setTarget(collezione); setModal('editCol') }}>Modifica</Btn>
                   {collezioni.length > 1 && <Btn small outline color="var(--cat-fili)" onClick={() => eliminaCollezione(collezione.id)}>Elimina</Btn>}
                   <Btn small color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovoMat') }}>+ Materiale</Btn>
