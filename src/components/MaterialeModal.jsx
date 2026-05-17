@@ -3,7 +3,6 @@ import { Modal, Field, Input, Textarea, Select, Btn, Row, Divider } from './ui'
 import { ColorPicker } from './ColorPicker'
 import { CAT_MATERIALI, UNITA_MISURA } from '../constants'
 
-// Comprime immagine
 function compressImage(file, cb) {
   const reader = new FileReader()
   reader.onload = ev => {
@@ -25,54 +24,6 @@ function compressImage(file, cb) {
   reader.readAsDataURL(file)
 }
 
-// Estrae i colori predominanti da un'immagine base64
-function estraiColori(base64, nColori = 5) {
-  return new Promise(resolve => {
-    const img = new Image()
-    img.onload = () => {
-      const canvas = document.createElement('canvas')
-      const SIZE = 80
-      canvas.width = SIZE; canvas.height = SIZE
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(img, 0, 0, SIZE, SIZE)
-      const pixels = ctx.getImageData(0, 0, SIZE, SIZE).data
-
-      // Raggruppa pixel per colore (quantizzazione semplice)
-      const bucket = {}
-      for (let i = 0; i < pixels.length; i += 4) {
-        const r = pixels[i], g = pixels[i+1], b = pixels[i+2], a = pixels[i+3]
-        if (a < 128) continue // ignora trasparenti
-        // Arrotonda a blocchi di 32 per raggruppare colori simili
-        const rq = Math.round(r / 32) * 32
-        const gq = Math.round(g / 32) * 32
-        const bq = Math.round(b / 32) * 32
-        const key = `${rq},${gq},${bq}`
-        bucket[key] = (bucket[key] || 0) + 1
-      }
-
-      // Ordina per frequenza e prendi i top
-      const sorted = Object.entries(bucket)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, nColori * 3)
-
-      // Filtra colori troppo chiari o troppo scuri
-      const filtrati = sorted.filter(([key]) => {
-        const [r, g, b] = key.split(',').map(Number)
-        const lum = (r * 299 + g * 587 + b * 114) / 1000
-        return lum > 20 && lum < 235
-      })
-
-      const colori = filtrati.slice(0, nColori).map(([key]) => {
-        const [r, g, b] = key.split(',').map(Number)
-        return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('')
-      })
-
-      resolve(colori.length > 0 ? colori : ['#d4a870'])
-    }
-    img.src = base64
-  })
-}
-
 export default function MaterialeModal({ editData, catOverride, onSave, onClose }) {
   const isEdit = !!editData
   const fileRef = useRef()
@@ -82,7 +33,6 @@ export default function MaterialeModal({ editData, catOverride, onSave, onClose 
   const [importing,      setImporting]      = useState(false)
   const [importError,    setImportError]    = useState('')
   const [importedFields, setImportedFields] = useState([])
-  const [estraendo,      setEstraendo]      = useState(false)
 
   const [f, setF] = useState({
     nome:          editData?.nome          || '',
@@ -98,17 +48,9 @@ export default function MaterialeModal({ editData, catOverride, onSave, onClose 
   })
   const set = k => v => setF(p => ({ ...p, [k]: v }))
 
-  async function handleImg(e) {
+  function handleImg(e) {
     const file = e.target.files[0]
-    if (!file) return
-    compressImage(file, async url => {
-      setF(p => ({ ...p, immagine: url }))
-      // Estrai colori automaticamente
-      setEstraendo(true)
-      const colori = await estraiColori(url)
-      setF(p => ({ ...p, colori }))
-      setEstraendo(false)
-    })
+    if (file) compressImage(file, url => setF(p => ({ ...p, immagine: url })))
   }
 
   async function importaDalLink() {
@@ -135,12 +77,9 @@ export default function MaterialeModal({ editData, catOverride, onSave, onClose 
             const blob = await imgRes.blob()
             if (blob.type.startsWith('image/')) {
               const reader = new FileReader()
-              reader.onload = async ev => {
-                const url = ev.target.result
-                setF(p => ({ ...p, immagine: url }))
-                const colori = await estraiColori(url)
-                setF(p => ({ ...p, colori }))
-                aggiornati.push('foto', 'colori')
+              reader.onload = ev => {
+                setF(p => ({ ...p, immagine: ev.target.result }))
+                aggiornati.push('foto')
                 setImportedFields([...aggiornati])
               }
               reader.readAsDataURL(blob)
@@ -170,7 +109,6 @@ export default function MaterialeModal({ editData, catOverride, onSave, onClose 
   return (
     <Modal title={isEdit ? 'Modifica' : 'Nuovo Materiale'} onClose={onClose}>
 
-      {/* Importa dal link */}
       <div style={{ background: 'linear-gradient(135deg, #fdf6ee, #f5ece0)', border: '1.5px solid #e8d8c4', borderRadius: 'var(--r-l)', padding: '14px 16px', marginBottom: 22 }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-2)', marginBottom: 10 }}>Importa dal sito del fornitore</div>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -203,7 +141,7 @@ export default function MaterialeModal({ editData, catOverride, onSave, onClose 
         </div>
       </Field>
 
-      <Field label={estraendo ? 'Colori (rilevamento in corso...)' : 'Colori'} hint="Carica una foto per rilevare i colori automaticamente">
+      <Field label="Colori">
         <ColorPicker colori={f.colori} setColori={set('colori')} />
       </Field>
 
@@ -224,7 +162,7 @@ export default function MaterialeModal({ editData, catOverride, onSave, onClose 
         </div>
         {f.costoUnitario > 0 && f.quantita > 0 && (
           <p style={{ marginTop: 6, fontSize: 12, color: 'var(--accent-warm)', fontWeight: 700 }}>
-            Valore stock: euro{(parseFloat(f.costoUnitario) * parseFloat(f.quantita)).toFixed(2)}
+            Valore stock: euro {(parseFloat(f.costoUnitario) * parseFloat(f.quantita)).toFixed(2)}
           </p>
         )}
       </Field>
@@ -240,16 +178,11 @@ export default function MaterialeModal({ editData, catOverride, onSave, onClose 
 
       <Divider />
 
-      <Field label="Foto" hint="I colori vengono rilevati automaticamente dalla foto">
+      <Field label="Foto">
         <input type="file" ref={fileRef} accept="image/*" onChange={handleImg} style={{ display: 'none' }} />
         {f.immagine ? (
           <div style={{ position: 'relative' }}>
             <img src={f.immagine} alt="" style={{ width: '100%', height: 130, objectFit: 'cover', borderRadius: 10 }} />
-            {estraendo && (
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 700 }}>
-                Rilevamento colori...
-              </div>
-            )}
             <button onClick={() => setF(p => ({ ...p, immagine: null }))}
               style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.55)', color: '#fff', border: 'none', borderRadius: 8, padding: '4px 10px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
               Rimuovi
@@ -258,7 +191,7 @@ export default function MaterialeModal({ editData, catOverride, onSave, onClose 
         ) : (
           <button onClick={() => fileRef.current.click()}
             style={{ width: '100%', height: 72, border: '2px dashed var(--border-s)', borderRadius: 10, background: 'var(--surface-2)', color: 'var(--text-3)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
-            Aggiungi foto — i colori verranno rilevati automaticamente
+            Aggiungi foto
           </button>
         )}
       </Field>
