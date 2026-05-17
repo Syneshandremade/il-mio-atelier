@@ -40,9 +40,8 @@
   --prod-orecchini: #c0786e;
   --prod-altro:     #8e8e8e;
 
-  --ff-display: 'Cormorant Garamond', Georgia, serif;
-  --ff-body:    'DM Sans', system-ui, sans-serif;
-
+  --ff-display: 'Italiana', Georgia, serif;
+  --ff-body:    'Raleway', system-ui, sans-serif;
   --r-s:   8px;
   --r-m:   14px;
   --r-l:   20px;
