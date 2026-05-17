@@ -29,15 +29,18 @@ export default function App() {
   const [cerca,     setCerca]     = useState('')
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session); setAuthLoad(false)
-    })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-  setSession(session)
-  setAuthLoad(false)
-})
-    return () => subscription.unsubscribe()
-  }, [])
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    setSession(session)
+    setAuthLoad(false)
+  }).catch(() => {
+    setAuthLoad(false)
+  })
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+    setSession(session)
+    setAuthLoad(false)
+  })
+  return () => subscription.unsubscribe()
+}, [])
 
   const userId = session?.user?.id
 
