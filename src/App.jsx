@@ -11,10 +11,10 @@ import AnalisiDashboard        from './components/AnalisiDashboard'
 import { Btn }                 from './components/ui'
 
 const TABS = [
-  { id: 'materiali',  label: '🧶 Materiali'  },
-  { id: 'imballaggi', label: '📦 Imballaggi' },
-  { id: 'prodotti',   label: '👜 Prodotti'   },
-  { id: 'analisi',    label: '📊 Analisi'    },
+  { id: 'materiali',  label: '🧶 MATERIALI'  },
+  { id: 'imballaggi', label: '📦 IMBALLAGGI' },
+  { id: 'prodotti',   label: '👜 PRODOTTI'   },
+  { id: 'analisi',    label: '📊 ANALISI'    },
 ]
 
 export default function App() {
