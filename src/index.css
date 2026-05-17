@@ -296,8 +296,9 @@ a:hover { text-decoration: underline; }
     flex-direction: row;
     border-right: none; border-top: 1px solid var(--border);
   }
-  .sidebar-logo { display: none; }
+  .sidebar-logo   { display: none; }
   .sidebar-footer { display: none; }
+  .sidebar-nav .logout-btn { display: none; }
   .sidebar-nav {
     flex-direction: row; padding: 6px 8px;
     gap: 2px; justify-content: space-around; overflow-x: auto;
