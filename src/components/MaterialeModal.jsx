@@ -24,22 +24,73 @@ function compressImage(file, cb) {
   reader.readAsDataURL(file)
 }
 
-export default function MaterialeModal({ editData, onSave, onClose }) {
+export default function MaterialeModal({ editData, catOverride, onSave, onClose }) {
   const isEdit = !!editData
   const fileRef = useRef()
+  const categorie = catOverride || CAT_MATERIALI
+
+  const [importUrl,      setImportUrl]      = useState('')
+  const [importing,      setImporting]      = useState(false)
+  const [importError,    setImportError]    = useState('')
+  const [importedFields, setImportedFields] = useState([])
+
   const [f, setF] = useState({
-    nome:          editData?.nome || '',
-    categoria:     editData?.categoria || 'filati',
-    colori:        editData?.colori ? [...editData.colori] : ['#d4a870'],
-    note:          editData?.note || '',
-    immagine:      editData?.immagine || null,
+    nome:          editData?.nome          || '',
+    categoria:     editData?.categoria     || categorie[0]?.id || 'filati',
+    colori:        editData?.colori        ? [...editData.colori] : ['#d4a870'],
+    note:          editData?.note          || '',
+    immagine:      editData?.immagine      || null,
     costoUnitario: editData?.costoUnitario ?? '',
-    unitaMisura:   editData?.unitaMisura || 'matassa',
-    quantita:      editData?.quantita ?? '',
-    fornitore:     editData?.fornitore || '',
+    unitaMisura:   editData?.unitaMisura   || 'matassa',
+    quantita:      editData?.quantita      ?? '',
+    fornitore:     editData?.fornitore     || '',
     linkFornitore: editData?.linkFornitore || '',
   })
   const set = k => v => setF(p => ({ ...p, [k]: v }))
+
+  async function importaDalLink() {
+    if (!importUrl.trim()) return
+    setImporting(true)
+    setImportError('')
+    setImportedFields([])
+    try {
+      const res  = await fetch(`/api/scrape?url=${encodeURIComponent(importUrl.trim())}`)
+      const data = await res.json()
+      if (!res.ok || data.error) throw new Error(data.error || 'Errore sconosciuto')
+      const aggiornati = []
+      setF(prev => {
+        const next = { ...prev }
+        if (data.nome && !prev.nome) { next.nome = data.nome; aggiornati.push('nome') }
+        if (data.prezzo && !prev.costoUnitario) { next.costoUnitario = data.prezzo; aggiornati.push('prezzo') }
+        if (data.fornitore && !prev.fornitore) { next.fornitore = data.fornitore; aggiornati.push('fornitore') }
+        if (!prev.linkFornitore) { next.linkFornitore = importUrl.trim(); aggiornati.push('link') }
+        if (data.descrizione && !prev.note) { next.note = data.descrizione; aggiornati.push('note') }
+        return next
+      })
+      if (data.immagine) {
+        try {
+          const imgRes = await fetch(`/api/scrape?url=${encodeURIComponent(data.immagine)}`)
+          if (imgRes.ok) {
+            const blob = await imgRes.blob()
+            if (blob.type.startsWith('image/')) {
+              const reader = new FileReader()
+              reader.onload = ev => {
+                setF(p => ({ ...p, immagine: ev.target.result }))
+                aggiornati.push('foto')
+                setImportedFields([...aggiornati])
+              }
+              reader.readAsDataURL(blob)
+            }
+          }
+        } catch {}
+      }
+      setImportedFields([...aggiornati])
+    } catch (err) {
+      setImportError(err.message || 'Impossibile leggere la pagina. Compila manualmente.')
+    } finally {
+      setImporting(false)
+    }
+  }
 
   function handleImg(e) {
     const file = e.target.files[0]
@@ -52,29 +103,42 @@ export default function MaterialeModal({ editData, onSave, onClose }) {
       id: editData?.id || ('m-' + Date.now()),
       ...f,
       costoUnitario: parseFloat(f.costoUnitario) || 0,
-      quantita: parseFloat(f.quantita) || 0,
-      createdAt: editData?.createdAt || Date.now(),
+      quantita:      parseFloat(f.quantita)      || 0,
+      createdAt:     editData?.createdAt || Date.now(),
     })
   }
 
   return (
-    <Modal title={isEdit ? 'Modifica Materiale' : 'Nuovo Materiale'} onClose={onClose}>
+    <Modal title={isEdit ? 'Modifica' : 'Nuovo'} onClose={onClose}>
+
+      <div style={{ background: 'linear-gradient(135deg, #fdf6ee, #f5ece0)', border: '1.5px solid #e8d8c4', borderRadius: 'var(--r-l)', padding: '14px 16px', marginBottom: 22 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-2)', marginBottom: 10 }}>✨ Importa dal sito del fornitore</div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input value={importUrl} onChange={e => { setImportUrl(e.target.value); setImportError('') }}
+            onKeyDown={e => e.key === 'Enter' && importaDalLink()}
+            placeholder="Incolla il link del prodotto…"
+            style={{ flex: 1, padding: '9px 12px', borderRadius: 'var(--r-m)', border: '1.5px solid #ddd0c0', fontSize: 13, fontFamily: 'var(--ff-body)', background: '#fff', outline: 'none' }} />
+          <button onClick={importaDalLink} disabled={importing || !importUrl.trim()}
+            style={{ background: importing ? '#ccc' : 'var(--accent-warm)', color: '#fff', border: 'none', borderRadius: 'var(--r-m)', padding: '9px 16px', fontSize: 13, fontWeight: 700, cursor: importing ? 'wait' : 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}>
+            {importing ? '⏳ Lettura…' : '📥 Importa'}
+          </button>
+        </div>
+        {importError && <p style={{ marginTop: 8, fontSize: 12, color: '#c04a4a' }}>⚠️ {importError}</p>}
+        {importedFields.length > 0 && !importing && <p style={{ marginTop: 8, fontSize: 12, color: '#4a8e4a', fontWeight: 600 }}>✓ Precompilati: {importedFields.join(', ')} — controlla e correggi!</p>}
+        <p style={{ marginTop: 6, fontSize: 11, color: 'var(--text-3)' }}>Funziona con HobbyPerline, LaCariaRicami, Etsy e la maggior parte degli e-commerce.</p>
+      </div>
+
       <Field label="Nome">
-        <Input value={f.nome} onChange={set('nome')} placeholder="Es. Rafia naturale, Perline rosa 4mm…" />
+        <Input value={f.nome} onChange={set('nome')} placeholder="Es. Rafia naturale, Scatolina kraft…" />
       </Field>
 
       <Field label="Categoria">
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-          {CAT_MATERIALI.map(cat => (
+          {categorie.map(cat => (
             <button key={cat.id} onClick={() => setF(p => ({ ...p, categoria: cat.id }))}
-              style={{
-                padding: '7px 13px', borderRadius: 'var(--r-pill)',
-                border: '1.5px solid',
-                borderColor: f.categoria === cat.id ? cat.cssVar : 'var(--border-s)',
-                background: f.categoria === cat.id ? cat.cssVar + '22' : '#fff',
-                color: f.categoria === cat.id ? cat.cssVar : 'var(--text-3)',
-                fontSize: 13, fontWeight: 700, cursor: 'pointer',
-              }}>{cat.emoji} {cat.label}</button>
+              style={{ padding: '7px 13px', borderRadius: 'var(--r-pill)', border: '1.5px solid', borderColor: f.categoria === cat.id ? cat.cssVar : 'var(--border-s)', background: f.categoria === cat.id ? cat.cssVar + '22' : '#fff', color: f.categoria === cat.id ? cat.cssVar : 'var(--text-3)', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+              {cat.emoji} {cat.label}
+            </button>
           ))}
         </div>
       </Field>
@@ -88,18 +152,15 @@ export default function MaterialeModal({ editData, onSave, onClose }) {
       <Field label="Costo & Quantità">
         <Row gap={10}>
           <div style={{ flex: 1 }}>
-            <Input type="number" value={f.costoUnitario} onChange={set('costoUnitario')}
-              placeholder="€ costo" min="0" step="0.01" />
+            <Input type="number" value={f.costoUnitario} onChange={set('costoUnitario')} placeholder="€ costo" min="0" step="0.01" />
           </div>
           <span style={{ color: 'var(--text-3)', fontSize: 13 }}>per</span>
           <div style={{ flex: 1.2 }}>
-            <Select value={f.unitaMisura} onChange={set('unitaMisura')}
-              options={UNITA_MISURA.map(u => ({ value: u, label: u }))} />
+            <Select value={f.unitaMisura} onChange={set('unitaMisura')} options={UNITA_MISURA.map(u => ({ value: u, label: u }))} />
           </div>
         </Row>
         <div style={{ marginTop: 8 }}>
-          <Input type="number" value={f.quantita} onChange={set('quantita')}
-            placeholder="Quantità in stock" min="0" step="0.5" />
+          <Input type="number" value={f.quantita} onChange={set('quantita')} placeholder="Quantità in stock" min="0" step="0.5" />
         </div>
         {f.costoUnitario > 0 && f.quantita > 0 && (
           <p style={{ marginTop: 6, fontSize: 12, color: 'var(--accent-warm)', fontWeight: 700 }}>
@@ -113,7 +174,7 @@ export default function MaterialeModal({ editData, onSave, onClose }) {
       <Field label="Fornitore">
         <Input value={f.fornitore} onChange={set('fornitore')} placeholder="Nome del fornitore" />
       </Field>
-      <Field label="Link fornitore" hint="Incolla l'URL alla pagina del prodotto">
+      <Field label="Link fornitore">
         <Input value={f.linkFornitore} onChange={set('linkFornitore')} placeholder="https://…" />
       </Field>
 
@@ -138,12 +199,12 @@ export default function MaterialeModal({ editData, onSave, onClose }) {
       </Field>
 
       <Field label="Note">
-        <Textarea value={f.note} onChange={set('note')} placeholder="Misura foro, codice colore, note di lavorazione…" rows={2} />
+        <Textarea value={f.note} onChange={set('note')} placeholder="Misura, codice colore, note…" rows={2} />
       </Field>
 
       <div style={{ marginTop: 6 }}>
         <Btn fullWidth color="var(--accent)" onClick={save}>
-          {isEdit ? '✓ Salva modifiche' : '+ Aggiungi materiale'}
+          {isEdit ? '✓ Salva modifiche' : '+ Aggiungi'}
         </Btn>
       </div>
     </Modal>
