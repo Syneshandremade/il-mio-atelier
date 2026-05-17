@@ -288,18 +288,29 @@ export default function AppContent({ onLogout }) {
                 </button>
               </div>
 
-              {/* Vista materiali */}
               {subTab === 'materiali' && (<>
-                {(collezione.materiali||[]).length > 3 && (
-                  <input value={cerca} onChange={e => setCerca(e.target.value)} placeholder="Cerca materiale..."
-                    style={{ width: '100%', padding: '10px 16px', borderRadius: 'var(--r-pill)', border: '1.5px solid var(--border-s)', fontSize: 13, background: 'rgba(255,252,247,0.9)', outline: 'none', fontFamily: 'var(--ff-body)', boxSizing: 'border-box', marginBottom: 18 }} />
-                )}
-                {matFiltrati.length === 0
-                  ? <EmptyState icon="🧵" title={cerca ? 'Nessun risultato' : 'Nessun materiale'} cta={!cerca && <Btn color="var(--accent)" onClick={() => setModal('nuovoMat')}>+ Aggiungi il primo materiale</Btn>} />
-                  : <Grid>{matFiltrati.map(m => <MaterialeCard key={m.id} mat={m} onEdit={m => { setTarget(m); setModal('editMat') }} onDelete={eliminaMateriale} />)}</Grid>
-                }
-              </>)}
-
+  {/* Filtro per categoria */}
+  {(collezione.materiali||[]).length > 0 && (
+    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+      <button
+        onClick={() => setCerca('')}
+        style={{ padding: '6px 14px', borderRadius: 'var(--r-pill)', border: '1.5px solid', borderColor: cerca === '' ? 'var(--accent)' : 'var(--border-s)', background: cerca === '' ? 'var(--accent)' : 'transparent', color: cerca === '' ? '#fff' : 'var(--text-3)', fontSize: 11, fontWeight: 600, letterSpacing: 1, cursor: 'pointer' }}>
+        TUTTI
+      </button>
+      {CAT_MATERIALI.filter(cat => (collezione.materiali||[]).some(m => m.categoria === cat.id)).map(cat => (
+        <button key={cat.id}
+          onClick={() => setCerca(cat.id)}
+          style={{ padding: '6px 14px', borderRadius: 'var(--r-pill)', border: '1.5px solid', borderColor: cerca === cat.id ? cat.cssVar : 'var(--border-s)', background: cerca === cat.id ? cat.cssVar + '22' : 'transparent', color: cerca === cat.id ? cat.cssVar : 'var(--text-3)', fontSize: 11, fontWeight: 600, letterSpacing: 1, cursor: 'pointer' }}>
+          {cat.emoji} {cat.label.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  )}
+  {matFiltrati.length === 0
+    ? <EmptyState icon="🧵" title="Nessun materiale trovato" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoMat')}>+ Aggiungi materiale</Btn>} />
+    : <Grid>{matFiltrati.map(m => <MaterialeCard key={m.id} mat={m} onEdit={m => { setTarget(m); setModal('editMat') }} onDelete={eliminaMateriale} />)}</Grid>
+  }
+</>)}
               {/* Vista prodotti della collezione */}
               {subTab === 'prodotti' && (<>
                 {prodottiCollezione.length === 0 ? (
