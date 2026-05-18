@@ -112,6 +112,7 @@ export default function AppContent({ onLogout }) {
     ...collezioni.flatMap(c => (c.materiali||[]).map(m => ({ ...m, _collezione: c.nome }))),
     ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
   ]
+    function logout() { onLogout() }
    function prodottiCheUsanoMateriale(materialeId) {
     return prodotti.filter(p => p.materialiUsati?.some(m => m.materialeId === materialeId))
   }
