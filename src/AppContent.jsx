@@ -112,7 +112,10 @@ export default function AppContent({ onLogout }) {
     ...collezioni.flatMap(c => (c.materiali||[]).map(m => ({ ...m, _collezione: c.nome }))),
     ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
   ]
-
+  const tuttiMateriali = [
+    ...collezioni.flatMap(c => (c.materiali||[]).map(m => ({ ...m, _collezione: c.nome }))),
+    ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
+  ]
   function logout() { onLogout() }
 
   async function salvaCollezione(data) {
