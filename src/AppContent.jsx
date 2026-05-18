@@ -189,7 +189,7 @@ export default function AppContent({ onLogout }) {
   async function eliminaImballaggio(id) {
     setImballaggi(imballaggi.filter(m => m.id !== id)); await dbDelete('imballaggi', id)
   }
-       async function salvaProdotto(data) {
+        async function salvaProdotto(data) {
     const precedente = prodotti.find(p => p.id === data.id)
     await aggiornaGiacenzeMateriali(precedente?.materialiUsati || [], data.materialiUsati || [])
 
