@@ -28,9 +28,11 @@ function MagazzinoSelector({ tuttiMateriali, onSeleziona, onClose }) {
   const [matScelta, setMatScelta] = useState(null)
   const [quantita, setQuantita] = useState('')
 
-  const filtrati = tuttiMateriali.filter(m =>
-    !cerca || m.nome.toLowerCase().includes(cerca.toLowerCase()) ||
-    m._collezione?.toLowerCase().includes(cerca.toLowerCase())
+    const filtrati = tuttiMateriali.filter(m =>
+    (parseFloat(m.quantita) || 0) > 0 && (
+      !cerca || m.nome.toLowerCase().includes(cerca.toLowerCase()) ||
+      m._collezione?.toLowerCase().includes(cerca.toLowerCase())
+    )
   )
 
   const ppu      = matScelta ? getPezziPerUnita(matScelta.unitaMisura) : 1
