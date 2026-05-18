@@ -189,7 +189,7 @@ export default function AppContent({ onLogout }) {
   async function eliminaImballaggio(id) {
     setImballaggi(imballaggi.filter(m => m.id !== id)); await dbDelete('imballaggi', id)
   }
-      async function salvaProdotto(data) {
+       async function salvaProdotto(data) {
     const precedente = prodotti.find(p => p.id === data.id)
     await aggiornaGiacenzeMateriali(precedente?.materialiUsati || [], data.materialiUsati || [])
 
@@ -198,21 +198,6 @@ export default function AppContent({ onLogout }) {
     await dbUpsert('prodotti', data); setModal(null)
   }
 
-  async function eliminaProdotto(id) {
-    if (!confirm('Eliminare questo prodotto?')) return
-    const prod = prodotti.find(p => p.id === id)
-
-    await aggiornaGiacenzeMateriali(prod?.materialiUsati || [], [])
-    setProdotti(prodotti.filter(p => p.id !== id)); await dbDelete('prodotti', id)
-  }
-
-  async function eliminaProdotto(id) {
-    if (!confirm('Eliminare questo prodotto?')) return
-    const prod = prodotti.find(p => p.id === id)
-
-    await aggiornaGiacenzeMateriali(prod?.materialiUsati || [], [])
-    setProdotti(prodotti.filter(p => p.id !== id)); await dbDelete('prodotti', id)
-  }
   async function eliminaProdotto(id) {
     if (!confirm('Eliminare questo prodotto?')) return
     const prod = prodotti.find(p => p.id === id)
