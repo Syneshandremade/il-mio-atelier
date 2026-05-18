@@ -112,10 +112,48 @@ export default function AppContent({ onLogout }) {
     ...collezioni.flatMap(c => (c.materiali||[]).map(m => ({ ...m, _collezione: c.nome }))),
     ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
   ]
-  const tuttiMateriali = [
-    ...collezioni.flatMap(c => (c.materiali||[]).map(m => ({ ...m, _collezione: c.nome }))),
-    ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
-  ]
+   function prodottiCheUsanoMateriale(materialeId) {
+    return prodotti.filter(p => p.materialiUsati?.some(m => m.materialeId === materialeId))
+  }
+
+  function sommaMaterialiUsati(materiali = []) {
+    return materiali.reduce((acc, m) => {
+      if (!m.materialeId) return acc
+      acc[m.materialeId] = (acc[m.materialeId] || 0) + (parseFloat(m.quantitaUsata) || 0)
+      return acc
+    }, {})
+  }
+
+  async function aggiornaGiacenzeMateriali(prima = [], dopo = []) {
+    const consumoPrima = sommaMaterialiUsati(prima)
+    const consumoDopo = sommaMaterialiUsati(dopo)
+    const ids = new Set([...Object.keys(consumoPrima), ...Object.keys(consumoDopo)])
+
+    if (ids.size === 0) return
+
+    const nuoveCollezioni = collezioni.map(c => {
+      let modificata = false
+      const materiali = (c.materiali || []).map(m => {
+        if (!ids.has(m.id)) return m
+
+        const deltaBase = (consumoDopo[m.id] || 0) - (consumoPrima[m.id] || 0)
+        if (!deltaBase) return m
+
+        const nuovaQuantita = Math.max(0, (parseFloat(m.quantita) || 0) - (deltaBase / getPezziPerUnita(m.unitaMisura)))
+        modificata = true
+
+        return { ...m, quantita: Math.round(nuovaQuantita * 10000) / 10000 }
+      })
+
+      return modificata ? { ...c, materiali } : c
+    })
+
+    const daSalvare = nuoveCollezioni.filter((c, i) => c !== collezioni[i])
+    if (daSalvare.length === 0) return
+
+    setCollezioni(nuoveCollezioni)
+    await Promise.all(daSalvare.map(c => dbUpsert('collezioni', c)))
+  }
   function logout() { onLogout() }
 
   async function salvaCollezione(data) {
