@@ -7,7 +7,7 @@ export default function MaterialeCard({ mat, onEdit, onDelete, prodottiUsati = [
   const val  = mat.costoUnitario && mat.quantita
     ? (mat.costoUnitario * mat.quantita).toFixed(2)
     : null
-
+  const esaurito = (parseFloat(mat.quantita) || 0) <= 0
   return (
     <div className="fade-up" style={{
       background: 'rgba(255,252,247,0.96)',
