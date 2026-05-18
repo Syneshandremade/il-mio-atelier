@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { APP_NAME, APP_TAGLINE, APP_EMOJI, COLLEZIONI_DEFAULT, PRODOTTI_DEFAULT, IMBALLAGGI_DEFAULT, CAT_IMBALLAGGI, CAT_PRODOTTI, CAT_MATERIALI, getPezziPerUnita } from './constants'
+import { APP_NAME, APP_TAGLINE, APP_EMOJI, COLLEZIONI_DEFAULT, PRODOTTI_DEFAULT, IMBALLAGGI_DEFAULT, CAT_IMBALLAGGI, CAT_PRODOTTI, CAT_MATERIALI } from './constants'
 import MaterialeCard     from './components/MaterialeCard'
 import MaterialeModal    from './components/MaterialeModal'
 import CollezioneModal   from './components/CollezioneModal'
@@ -112,51 +112,10 @@ export default function AppContent({ onLogout }) {
     ...collezioni.flatMap(c => (c.materiali||[]).map(m => ({ ...m, _collezione: c.nome }))),
     ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
   ]
-    function logout() { onLogout() }
-   function prodottiCheUsanoMateriale(materialeId) {
-    return prodotti.filter(p => p.materialiUsati?.some(m => m.materialeId === materialeId))
-  }
 
-  function sommaMaterialiUsati(materiali = []) {
-    return materiali.reduce((acc, m) => {
-      if (!m.materialeId) return acc
-      acc[m.materialeId] = (acc[m.materialeId] || 0) + (parseFloat(m.quantitaUsata) || 0)
-      return acc
-    }, {})
-  }
+  function logout() { onLogout() }
 
-    async function aggiornaGiacenzeMateriali(prima = [], dopo = []) {
-    const consumoPrima = sommaMaterialiUsati(prima)
-    const consumoDopo = sommaMaterialiUsati(dopo)
-    const ids = new Set([...Object.keys(consumoPrima), ...Object.keys(consumoDopo)])
-
-    if (ids.size === 0) return
-
-    const nuoveCollezioni = collezioni.map(c => {
-      let modificata = false
-      const materiali = (c.materiali || []).map(m => {
-        if (!ids.has(m.id)) return m
-
-        const deltaBase = (consumoDopo[m.id] || 0) - (consumoPrima[m.id] || 0)
-        if (!deltaBase) return m
-
-        const nuovaQuantita = Math.max(0, (parseFloat(m.quantita) || 0) - (deltaBase / getPezziPerUnita(m.unitaMisura)))
-        modificata = true
-
-        return { ...m, quantita: Math.round(nuovaQuantita * 10000) / 10000 }
-      })
-
-      return modificata ? { ...c, materiali } : c
-    })
-
-       const daSalvare = nuoveCollezioni.filter((c, i) => c !== collezioni[i])
-    if (daSalvare.length === 0) return
-
-    setCollezioni(nuoveCollezioni)
-    await Promise.all(daSalvare.map(c => dbUpsert('collezioni', c)))
-  
-  }
-    async function salvaCollezione(data) {
+  async function salvaCollezione(data) {
     const esiste = collezioni.find(c => c.id === data.id)
     const nuove = esiste ? collezioni.map(c => c.id === data.id ? { ...c, ...data } : c) : [...collezioni, data]
     setCollezioni(nuove); setActiveCol(data.id)
@@ -190,20 +149,13 @@ export default function AppContent({ onLogout }) {
   async function eliminaImballaggio(id) {
     setImballaggi(imballaggi.filter(m => m.id !== id)); await dbDelete('imballaggi', id)
   }
-        async function salvaProdotto(data) {
-    const precedente = prodotti.find(p => p.id === data.id)
-    await aggiornaGiacenzeMateriali(precedente?.materialiUsati || [], data.materialiUsati || [])
-
+  async function salvaProdotto(data) {
     const esiste = prodotti.find(p => p.id === data.id)
     setProdotti(esiste ? prodotti.map(p => p.id === data.id ? data : p) : [...prodotti, data])
     await dbUpsert('prodotti', data); setModal(null)
   }
-
   async function eliminaProdotto(id) {
     if (!confirm('Eliminare questo prodotto?')) return
-    const prod = prodotti.find(p => p.id === id)
-
-    await aggiornaGiacenzeMateriali(prod?.materialiUsati || [], [])
     setProdotti(prodotti.filter(p => p.id !== id)); await dbDelete('prodotti', id)
   }
   async function toggleVenduto(id) {
@@ -348,7 +300,7 @@ export default function AppContent({ onLogout }) {
                   )}
                   {matFiltrati.length === 0
                     ? <EmptyState icon="🧵" title="Nessun materiale trovato" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoMat')}>+ Aggiungi materiale</Btn>} />
-                   : <Grid>{matFiltrati.map(m => <MaterialeCard key={m.id} mat={m} prodottiUsati={prodottiCheUsanoMateriale(m.id)} onEdit={m => { setTarget(m); setModal('editMat') }} onDelete={eliminaMateriale} />)}</Grid>
+                    : <Grid>{matFiltrati.map(m => <MaterialeCard key={m.id} mat={m} onEdit={m => { setTarget(m); setModal('editMat') }} onDelete={eliminaMateriale} />)}</Grid>
                   }
                 </>)}
 
