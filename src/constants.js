@@ -8,12 +8,12 @@ export const APP_EMOJI   = '🪡'
 
 // ── Categorie MATERIALI ──────────────────
 export const CAT_MATERIALI = [
-  { id: 'filati',   label: 'Filati',         emoji: '', cssVar: 'var(--cat-filati)'   },
-  { id: 'perline',  label: 'Perline',         emoji: '', cssVar: 'var(--cat-perline)'  },
-  { id: 'fili',     label: 'Charms',   emoji: '', cssVar: 'var(--cat-fili)'     },
-  { id: 'fermagli', label: 'Minuteria',        emoji: '', cssVar: 'var(--cat-fermagli)' },
-  { id: 'tessuti',  label: 'Tessuti',   emoji: '', cssVar: 'var(--cat-tessuti)'  },
-  { id: 'altro',    label: 'Altro',           emoji: '', cssVar: 'var(--cat-altro)'    },
+  { id: 'filati',   label: 'Filati',         , cssVar: 'var(--cat-filati)'   },
+  { id: 'perline',  label: 'Perline',         , cssVar: 'var(--cat-perline)'  },
+  { id: 'fili',     label: 'Charms',   , cssVar: 'var(--cat-fili)'     },
+  { id: 'fermagli', label: 'Minuteria',        , cssVar: 'var(--cat-fermagli)' },
+  { id: 'tessuti',  label: 'Tessuti',  , cssVar: 'var(--cat-tessuti)'  },
+  { id: 'altro',    label: 'Altro',           , cssVar: 'var(--cat-altro)'    },
 ]
 
 // ── Categorie IMBALLAGGI & SPEDIZIONE ────
