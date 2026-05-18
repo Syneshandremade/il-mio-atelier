@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { APP_NAME, APP_TAGLINE, APP_EMOJI, COLLEZIONI_DEFAULT, PRODOTTI_DEFAULT, IMBALLAGGI_DEFAULT, CAT_IMBALLAGGI, CAT_PRODOTTI, CAT_MATERIALI } from './constants'
+import { APP_NAME, APP_TAGLINE, APP_EMOJI, COLLEZIONI_DEFAULT, PRODOTTI_DEFAULT, IMBALLAGGI_DEFAULT, CAT_IMBALLAGGI, CAT_PRODOTTI, CAT_MATERIALI, getPezziPerUnita } from './constants'
 import MaterialeCard     from './components/MaterialeCard'
 import MaterialeModal    from './components/MaterialeModal'
 import CollezioneModal   from './components/CollezioneModal'
