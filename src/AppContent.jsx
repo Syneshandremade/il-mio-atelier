@@ -154,8 +154,12 @@ export default function AppContent({ onLogout }) {
     await aggiornaGiacenzeMateriali(precedente?.materialiUsati || [], data.materialiUsati || [])
 
     const esiste = prodotti.find(p => p.id === data.id)
-    setProdotti(esiste ? prodotti.map(p => p.id === data.id ? data : p) : [...prodotti, data])
-    await dbUpsert('prodotti', data); setModal(null)
+     async function eliminaProdotto(id) {
+    if (!confirm('Eliminare questo prodotto?')) return
+    const prod = prodotti.find(p => p.id === id)
+
+    await aggiornaGiacenzeMateriali(prod?.materialiUsati || [], [])
+    setProdotti(prodotti.filter(p => p.id !== id)); await dbDelete('prodotti', id)
   }
   function logout() { onLogout() }
 
