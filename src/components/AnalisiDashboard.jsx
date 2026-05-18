@@ -180,7 +180,7 @@ function VistaMensile({ prodotti }) {
           <Card key={k} title={`📅 ${monthLabel(k)}`}>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
               <div style={{ flex: 1, minWidth: 90, background: 'var(--surface-2)', borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
-                <div style={{ fontSize: 18, fontWeight: 700, fontFamily: 'var(--ff-display)' }}>€{m.ricavi.toFixed(2)}</div>
+                               <div style={{ fontSize: 20, fontWeight: 600, fontFamily: 'var(--ff-body)', fontVariantNumeric: 'tabular-nums' }}>€{m.ricavi.toFixed(2)}</div>
                 <div style={{ fontSize: 11, color: 'var(--text-3)' }}>Ricavi</div>
               </div>
               <div style={{ flex: 1, minWidth: 90, background: 'var(--surface-2)', borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
