@@ -234,7 +234,7 @@ function VistaCollezione({ collezioni, prodotti }) {
                 <div style={{ fontSize: 11, color: 'var(--text-3)' }}>Materiali</div>
               </div>
               <div style={{ flex: 1, minWidth: 90, background: 'var(--surface-2)', borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
-                <div style={{ fontSize: 18, fontWeight: 700, fontFamily: 'var(--ff-display)', color: 'var(--accent-warm)' }}>€{totInv.toFixed(2)}</div>
+                                <div style={{ fontSize: 20, fontWeight: 600, fontFamily: 'var(--ff-body)', fontVariantNumeric: 'tabular-nums', color: 'var(--accent-warm)' }}>€{totInv.toFixed(2)}</div>
                 <div style={{ fontSize: 11, color: 'var(--text-3)' }}>Valore stock</div>
               </div>
               <div style={{ flex: 1, minWidth: 90, background: matUsateCol.length>0?'#4a8e4a18':'var(--surface-2)', borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
