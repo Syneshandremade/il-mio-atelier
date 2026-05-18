@@ -149,10 +149,13 @@ export default function AppContent({ onLogout }) {
     })
 
     const daSalvare = nuoveCollezioni.filter((c, i) => c !== collezioni[i])
-    if (daSalvare.length === 0) return
+      async function salvaProdotto(data) {
+    const precedente = prodotti.find(p => p.id === data.id)
+    await aggiornaGiacenzeMateriali(precedente?.materialiUsati || [], data.materialiUsati || [])
 
-    setCollezioni(nuoveCollezioni)
-    await Promise.all(daSalvare.map(c => dbUpsert('collezioni', c)))
+    const esiste = prodotti.find(p => p.id === data.id)
+    setProdotti(esiste ? prodotti.map(p => p.id === data.id ? data : p) : [...prodotti, data])
+    await dbUpsert('prodotti', data); setModal(null)
   }
   function logout() { onLogout() }
 
