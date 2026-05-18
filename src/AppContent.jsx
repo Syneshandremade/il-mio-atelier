@@ -124,7 +124,7 @@ export default function AppContent({ onLogout }) {
     }, {})
   }
 
-  async function aggiornaGiacenzeMateriali(prima = [], dopo = []) {
+    async function aggiornaGiacenzeMateriali(prima = [], dopo = []) {
     const consumoPrima = sommaMaterialiUsati(prima)
     const consumoDopo = sommaMaterialiUsati(dopo)
     const ids = new Set([...Object.keys(consumoPrima), ...Object.keys(consumoDopo)])
@@ -149,17 +149,10 @@ export default function AppContent({ onLogout }) {
     })
 
     const daSalvare = nuoveCollezioni.filter((c, i) => c !== collezioni[i])
-      async function salvaProdotto(data) {
-    const precedente = prodotti.find(p => p.id === data.id)
-    await aggiornaGiacenzeMateriali(precedente?.materialiUsati || [], data.materialiUsati || [])
+    if (daSalvare.length === 0) return
 
-    const esiste = prodotti.find(p => p.id === data.id)
-     async function eliminaProdotto(id) {
-    if (!confirm('Eliminare questo prodotto?')) return
-    const prod = prodotti.find(p => p.id === id)
-
-    await aggiornaGiacenzeMateriali(prod?.materialiUsati || [], [])
-    setProdotti(prodotti.filter(p => p.id !== id)); await dbDelete('prodotti', id)
+    setCollezioni(nuoveCollezioni)
+    await Promise.all(daSalvare.map(c => dbUpsert('collezioni', c)))
   }
   function logout() { onLogout() }
 
