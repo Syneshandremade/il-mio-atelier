@@ -2,7 +2,7 @@ import { CAT_MATERIALI } from '../constants'
 import { Palette } from './ColorPicker'
 import { Btn } from './ui'
 
-export default function MaterialeCard({ mat, onEdit, onDelete }) {
+export default function MaterialeCard({ mat, onEdit, onDelete, prodottiUsati = [] }) {
   const cat  = CAT_MATERIALI.find(c => c.id === mat.categoria) || CAT_MATERIALI.at(-1)
   const val  = mat.costoUnitario && mat.quantita
     ? (mat.costoUnitario * mat.quantita).toFixed(2)
