@@ -41,10 +41,10 @@ async function dbDelete(tabella, id) {
 }
 
 const TABS = [
-  { id: 'materiali',  emoji: 'ðŸ§¶', label: 'MATERIALI'  },
-  { id: 'imballaggi', emoji: 'ðŸ“¦', label: 'IMBALLAGGI' },
-  { id: 'prodotti',   emoji: 'ðŸ‘œ', label: 'PRODOTTI'   },
-  { id: 'analisi',    emoji: 'ðŸ“Š', label: 'ANALISI'    },
+  { id: 'materiali',  emoji: '🧶', label: 'MATERIALI'  },
+  { id: 'imballaggi', emoji: '📦', label: 'IMBALLAGGI' },
+  { id: 'prodotti',   emoji: '👜', label: 'PRODOTTI'   },
+  { id: 'analisi',    emoji: '📊', label: 'ANALISI'    },
 ]
 
 export default function AppContent({ onLogout }) {
@@ -110,7 +110,7 @@ export default function AppContent({ onLogout }) {
 
   const tuttiMateriali = [
     ...collezioni.flatMap(c => (c.materiali||[]).map(m => ({ ...m, _collezione: c.nome }))),
-    ...imballaggi.map(m => ({ ...m, _collezione: 'ðŸ“¦ Imballaggi' })),
+    ...imballaggi.map(m => ({ ...m, _collezione: '📦 Imballaggi' })),
   ]
 
   function logout() { onLogout() }
@@ -236,7 +236,7 @@ export default function AppContent({ onLogout }) {
             </nav>
             <div style={{ padding: '14px 14px 24px', borderTop: '1px solid var(--border)' }}>
               <button onClick={logout} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 20px', borderRadius: 'var(--r-m)', border: 'none', background: 'transparent', color: 'var(--text-3)', fontFamily: 'var(--ff-body)', fontSize: 12, cursor: 'pointer', width: '100%' }}>
-                <span>ðŸšª</span> ESCI
+                <span>🚪</span> ESCI
               </button>
             </div>
           </aside>
@@ -267,7 +267,7 @@ export default function AppContent({ onLogout }) {
                     {collezione.descrizione && <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>{collezione.descrizione}</p>}
                   </div>
                   <div style={{ display: 'flex', gap: 5, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                    <Btn small outline onClick={() => setModal('accostamento')}>ðŸŽ¨ Abbina</Btn>
+                    <Btn small outline onClick={() => setModal('accostamento')}>🎨 Abbina</Btn>
                     <Btn small outline onClick={() => { setTarget(collezione); setModal('editCol') }}>Modifica</Btn>
                     {collezioni.length > 1 && <Btn small outline color="var(--cat-fili)" onClick={() => eliminaCollezione(collezione.id)}>Elimina</Btn>}
                     <Btn small color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovoMat') }}>+ Materiale</Btn>
@@ -299,14 +299,14 @@ export default function AppContent({ onLogout }) {
                     </div>
                   )}
                   {matFiltrati.length === 0
-                    ? <EmptyState icon="ðŸ§µ" title="Nessun materiale trovato" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoMat')}>+ Aggiungi materiale</Btn>} />
+                    ? <EmptyState icon="🧵" title="Nessun materiale trovato" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoMat')}>+ Aggiungi materiale</Btn>} />
                     : <Grid>{matFiltrati.map(m => <MaterialeCard key={m.id} mat={m} onEdit={m => { setTarget(m); setModal('editMat') }} onDelete={eliminaMateriale} />)}</Grid>
                   }
                 </>)}
 
                 {subTab === 'prodotti' && (<>
                   {prodottiCollezione.length === 0 ? (
-                    <EmptyState icon="ðŸ‘œ" title="Nessun prodotto usa materiali di questa collezione" cta={<Btn color="var(--accent)" onClick={() => { setTab('prodotti'); setModal('nuovoProd') }}>+ Crea prodotto</Btn>} />
+                    <EmptyState icon="👜" title="Nessun prodotto usa materiali di questa collezione" cta={<Btn color="var(--accent)" onClick={() => { setTab('prodotti'); setModal('nuovoProd') }}>+ Crea prodotto</Btn>} />
                   ) : (<>
                     <div style={{ marginBottom: 24 }}>
                       <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 14 }}>Tutti ({prodottiCollezione.length})</div>
@@ -321,7 +321,7 @@ export default function AppContent({ onLogout }) {
                   </>)}
                 </>)}
               </>) : (
-                <EmptyState icon="ðŸª¡" title="Crea la tua prima collezione!" cta={<Btn color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovaCol') }}>+ Crea collezione</Btn>} />
+                <EmptyState icon="🪡" title="Crea la tua prima collezione!" cta={<Btn color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovaCol') }}>+ Crea collezione</Btn>} />
               )}
             </>)}
 
@@ -339,7 +339,7 @@ export default function AppContent({ onLogout }) {
                   style={{ width: '100%', padding: '10px 16px', borderRadius: 'var(--r-pill)', border: '1.5px solid var(--border-s)', fontSize: 13, background: 'rgba(255,252,247,0.9)', outline: 'none', fontFamily: 'var(--ff-body)', boxSizing: 'border-box', marginBottom: 18 }} />
               )}
               {imbFiltrati.length === 0
-                ? <EmptyState icon="ðŸ“¦" title="Nessun articolo ancora" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoImb')}>+ Aggiungi il primo articolo</Btn>} />
+                ? <EmptyState icon="📦" title="Nessun articolo ancora" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoImb')}>+ Aggiungi il primo articolo</Btn>} />
                 : <Grid>{imbFiltrati.map(m => <MaterialeCard key={m.id} mat={m} catOverride={CAT_IMBALLAGGI} onEdit={m => { setTarget(m); setModal('editImb') }} onDelete={eliminaImballaggio} />)}</Grid>
               }
             </>)}
@@ -348,7 +348,7 @@ export default function AppContent({ onLogout }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, gap: 10 }}>
                 <div>
                   <h1 style={{ fontFamily: 'var(--ff-display)', fontSize: 'clamp(18px, 5vw, 32px)', fontWeight: 700, letterSpacing: -0.5 }}>I miei prodotti</h1>
-                  <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>{prodotti.filter(p=>p.venduto).length} venduti Â· {prodotti.filter(p=>!p.venduto).length} in stock</p>
+                  <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>{prodotti.filter(p=>p.venduto).length} venduti · {prodotti.filter(p=>!p.venduto).length} in stock</p>
                 </div>
                 <Btn color="var(--accent)" onClick={() => { setTarget(null); setModal('nuovoProd') }}>+ Prodotto</Btn>
               </div>
@@ -357,7 +357,7 @@ export default function AppContent({ onLogout }) {
                   style={{ width: '100%', padding: '10px 16px', borderRadius: 'var(--r-pill)', border: '1.5px solid var(--border-s)', fontSize: 13, background: 'rgba(255,252,247,0.9)', outline: 'none', fontFamily: 'var(--ff-body)', boxSizing: 'border-box', marginBottom: 18 }} />
               )}
               {prodFiltrati.length === 0
-                ? <EmptyState icon="ðŸ‘œ" title="Nessun prodotto ancora" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoProd')}>+ Aggiungi il primo prodotto</Btn>} />
+                ? <EmptyState icon="👜" title="Nessun prodotto ancora" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoProd')}>+ Aggiungi il primo prodotto</Btn>} />
                 : <Grid>{prodFiltrati.map(p => <ProdottoCard key={p.id} prod={p} onEdit={p => { setTarget(p); setModal('editProd') }} onDelete={eliminaProdotto} onToggleVenduto={toggleVenduto} />)}</Grid>
               }
             </>)}
@@ -388,7 +388,7 @@ export default function AppContent({ onLogout }) {
           ))}
           <button onClick={logout}
             style={{ flex: 0.8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, border: 'none', background: 'transparent', color: 'var(--text-3)', fontSize: 9, fontFamily: 'var(--ff-body)', fontWeight: 600, cursor: 'pointer' }}>
-            <span style={{ fontSize: 22 }}>ðŸšª</span>
+            <span style={{ fontSize: 22 }}>🚪</span>
             ESCI
           </button>
         </nav>
