@@ -68,7 +68,11 @@ export default function MaterialeCard({ mat, onEdit, onDelete, prodottiUsati = [
           {mat.quantita > 0 && <span>× {mat.quantita} = <b>€{val}</b></span>}
         </div>
       )}
-
+      {prodottiUsati.length > 0 && (
+        <div style={{ fontSize: 11, color: 'var(--text-3)', lineHeight: 1.4 }}>
+          Usato in: <b>{prodottiUsati.map(p => p.nome).join(', ')}</b>
+        </div>
+      )}
       {/* Fornitore + link */}
       {mat.fornitore && (
         <div style={{ fontSize: 12, color: 'var(--text-3)' }}>
