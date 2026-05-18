@@ -155,6 +155,12 @@ export default function AppContent({ onLogout }) {
     await Promise.all(daSalvare.map(c => dbUpsert('collezioni', c)))
   
   }
+    async function salvaCollezione(data) {
+    const esiste = collezioni.find(c => c.id === data.id)
+    const nuove = esiste ? collezioni.map(c => c.id === data.id ? { ...c, ...data } : c) : [...collezioni, data]
+    setCollezioni(nuove); setActiveCol(data.id)
+    await dbUpsert('collezioni', data); setModal(null)
+  }
   async function eliminaCollezione(id) {
     if (!confirm('Eliminare questa collezione?')) return
     const nuove = collezioni.filter(c => c.id !== id)
