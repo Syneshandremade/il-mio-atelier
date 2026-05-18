@@ -148,19 +148,12 @@ export default function AppContent({ onLogout }) {
       return modificata ? { ...c, materiali } : c
     })
 
-    const daSalvare = nuoveCollezioni.filter((c, i) => c !== collezioni[i])
+       const daSalvare = nuoveCollezioni.filter((c, i) => c !== collezioni[i])
     if (daSalvare.length === 0) return
 
     setCollezioni(nuoveCollezioni)
     await Promise.all(daSalvare.map(c => dbUpsert('collezioni', c)))
-  }
-  function logout() { onLogout() }
-
-  async function salvaCollezione(data) {
-    const esiste = collezioni.find(c => c.id === data.id)
-    const nuove = esiste ? collezioni.map(c => c.id === data.id ? { ...c, ...data } : c) : [...collezioni, data]
-    setCollezioni(nuove); setActiveCol(data.id)
-    await dbUpsert('collezioni', data); setModal(null)
+  
   }
   async function eliminaCollezione(id) {
     if (!confirm('Eliminare questa collezione?')) return
