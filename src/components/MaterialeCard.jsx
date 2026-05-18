@@ -9,7 +9,8 @@ export default function MaterialeCard({ mat, onEdit, onDelete, prodottiUsati = [
     : null
   const esaurito = (parseFloat(mat.quantita) || 0) <= 0
   return (
-    <div className="fade-up" style={{
+    <div className="fade-up" style={{      position: 'relative',
+      overflow: 'hidden',
       background: 'rgba(255,252,247,0.96)',
       borderRadius: 'var(--r-l)', padding: '16px',
       boxShadow: 'var(--shadow-s)',
