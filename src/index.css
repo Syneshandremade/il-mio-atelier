@@ -48,7 +48,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; -webkit-text-size-adjust: 100%; }
-body { font-family: var(--ff-body); background: var(--bg); min-height: 100vh; color: var(--text); -webkit-font-smoothing: antialiased; font-weight: 300; }
+body { font-family: var(--ff-body); background: var(--bg); min-height: 100vh; color: var(--text); -webkit-font-smoothing: antialiased; font-weight: 300;font-variant-numeric: tabular-nums; }
 button { font-family: var(--ff-body); cursor: pointer; font-weight: 400; }
 button:active { transform: scale(0.97); }
 h1, h2, h3 { font-weight: 600; }
