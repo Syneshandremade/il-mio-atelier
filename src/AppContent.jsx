@@ -214,40 +214,93 @@ export default function AppContent({ onLogout }) {
       </div>
     </div>
   )
-
+const isMobile = window.innerWidth <= 900
   return (
     <div className="app-layout">
 
-      {/* Header mobile — solo su smartphone */}
-      <div className={`mobile-header${headerNascosto ? ' nascosto' : ''}`}>
-  <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-    <div style={{ fontSize: 20 }}>{APP_EMOJI}</div>
-    <div style={{ fontFamily: 'var(--ff-display)', fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>{APP_NAME}</div>
-    <div style={{ fontSize: 9, color: 'var(--text-3)', letterSpacing: 2, textTransform: 'uppercase', marginTop: 2 }}>{APP_TAGLINE}</div>
-  </div>
-</div>
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <div style={{ fontSize: 36, marginBottom: 12 }}>{APP_EMOJI}</div>
-          <div style={{ fontFamily: 'var(--ff-display)', fontSize: 22, fontWeight: 700, letterSpacing: -0.3, color: 'var(--text)' }}>{APP_NAME}</div>
-          <div style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: 2, textTransform: 'uppercase', marginTop: 6 }}>{APP_TAGLINE}</div>
+      {/* Header mobile in cima */}
+      {isMobile && (
+        <div style={{
+          position: 'sticky', top: 0, zIndex: 40,
+          background: 'var(--surface)',
+          borderBottom: '1px solid var(--border)',
+          padding: '12px 20px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+          transform: headerNascosto ? 'translateY(-100%)' : 'translateY(0)',
+          opacity: headerNascosto ? 0 : 1,
+          transition: 'transform 0.3s ease, opacity 0.3s ease',
+          width: '100%',
+        }}>
+          <span style={{ fontSize: 24 }}>{APP_EMOJI}</span>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: 'var(--ff-display)', fontSize: 18, fontWeight: 700 }}>{APP_NAME}</div>
+            <div style={{ fontSize: 9, color: 'var(--text-3)', letterSpacing: 2, textTransform: 'uppercase' }}>{APP_TAGLINE}</div>
+          </div>
         </div>
-        <nav className="sidebar-nav">
+      )}
+
+      {/* Navigazione mobile in basso */}
+      {isMobile && (
+        <nav style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0,
+          height: 64, background: 'var(--surface)',
+          borderTop: '1px solid var(--border)',
+          display: 'flex', zIndex: 50,
+        }}>
           {TABS.map(t => (
-            <button key={t.id} className={`nav-item${tab === t.id ? ' active' : ''}`}
-              onClick={() => { setTab(t.id); setCerca('') }}>
-              <span className="nav-emoji">{t.emoji}</span>
+            <button key={t.id} onClick={() => { setTab(t.id); setCerca('') }}
+              style={{
+                flex: 1, display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', gap: 3,
+                border: 'none',
+                background: tab === t.id ? 'var(--accent)' : 'transparent',
+                color: tab === t.id ? '#fff' : 'var(--text-3)',
+                fontSize: 9, fontFamily: 'var(--ff-body)', fontWeight: 600,
+                letterSpacing: 0.5, cursor: 'pointer',
+              }}>
+              <span style={{ fontSize: 20 }}>{t.emoji}</span>
               {t.label}
             </button>
           ))}
-        </nav>
-        <div className="sidebar-footer">
-          <button className="logout-btn" onClick={logout}>
-            <span style={{ fontSize: 16 }}>🚪</span>
+          <button onClick={logout}
+            style={{
+              flex: 0.7, display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: 3,
+              border: 'none', background: 'transparent',
+              color: 'var(--text-3)', fontSize: 9,
+              fontFamily: 'var(--ff-body)', fontWeight: 600, cursor: 'pointer',
+            }}>
+            <span style={{ fontSize: 20 }}>🚪</span>
             ESCI
           </button>
-        </div>
-      </aside>
+        </nav>
+      )}
+
+      {/* Sidebar solo su desktop */}
+      {!isMobile && (
+        <aside className="sidebar">
+          <div className="sidebar-logo">
+            <div style={{ fontSize: 36, marginBottom: 12 }}>{APP_EMOJI}</div>
+            <div style={{ fontFamily: 'var(--ff-display)', fontSize: 22, fontWeight: 700, letterSpacing: -0.3, color: 'var(--text)' }}>{APP_NAME}</div>
+            <div style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: 2, textTransform: 'uppercase', marginTop: 6 }}>{APP_TAGLINE}</div>
+          </div>
+          <nav className="sidebar-nav">
+            {TABS.map(t => (
+              <button key={t.id} className={`nav-item${tab === t.id ? ' active' : ''}`}
+                onClick={() => { setTab(t.id); setCerca('') }}>
+                <span className="nav-emoji">{t.emoji}</span>
+                {t.label}
+              </button>
+            ))}
+          </nav>
+          <div className="sidebar-footer">
+            <button className="logout-btn" onClick={logout}>
+              <span style={{ fontSize: 16 }}>🚪</span>
+              ESCI
+            </button>
+          </div>
+        </aside>
+      )}
 
       <main className="main-content">
         <div style={{ padding: '32px 28px', maxWidth: 780, margin: '0 auto' }}>
