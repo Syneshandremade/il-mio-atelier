@@ -341,7 +341,7 @@ export default function AppContent({ onLogout }) {
                   )}
                   {matFiltrati.length === 0
                     ? <EmptyState icon="🧵" title="Nessun materiale trovato" cta={<Btn color="var(--accent)" onClick={() => setModal('nuovoMat')}>+ Aggiungi materiale</Btn>} />
-                    : <Grid>{matFiltrati.map(m => <MaterialeCard key={m.id} mat={m} prodottiUsati={prodottiCheUsanoMateriale(m.id)} onEdit={m => { setTarget(m); setModal('editMat') }} onDelete={eliminaMateriale} />)}</Grid>
+                   : <Grid>{matFiltrati.map(m => <MaterialeCard key={m.id} mat={m} prodottiUsati={prodottiCheUsanoMateriale(m.id)} onEdit={m => { setTarget(m); setModal('editMat') }} onDelete={eliminaMateriale} />)}</Grid>
                   }
                 </>)}
 
