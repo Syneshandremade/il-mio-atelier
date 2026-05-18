@@ -110,6 +110,7 @@ a:hover { text-decoration: underline; }
   flex-direction: column;
   z-index: 50;
 }
+overflow: hidden;
 
 .sidebar-logo {
   padding: 36px 24px 28px;
