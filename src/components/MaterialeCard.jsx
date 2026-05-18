@@ -20,7 +20,11 @@ export default function MaterialeCard({ mat, onEdit, onDelete, prodottiUsati = [
     }}
       onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--shadow-m)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
       onMouseLeave={e => { e.currentTarget.style.boxShadow = 'var(--shadow-s)'; e.currentTarget.style.transform = 'translateY(0)' }}
-    >
+    >      {esaurito && (
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(30,26,22,0.56)', borderRadius: 'var(--r-l)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 13, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', zIndex: 2, pointerEvents: 'none' }}>
+          Esaurito
+        </div>
+      )}
       {/* Immagine / gradiente */}
       {mat.immagine ? (
         <img src={mat.immagine} alt={mat.nome}
