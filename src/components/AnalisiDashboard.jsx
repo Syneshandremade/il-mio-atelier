@@ -12,16 +12,7 @@ function KPI({ emoji, label, val, color, sub }) {
   return (
     <div style={{ background: 'rgba(255,252,247,0.97)', borderRadius: 'var(--r-l)', padding: '18px 20px', flex: 1, minWidth: 120, boxShadow: 'var(--shadow-s)', border: '1px solid var(--border)' }}>
       <div style={{ fontSize: 22, marginBottom: 6 }}>{emoji}</div>
-      <div style={{ 
-  fontFamily: 'var(--ff-body)', 
-  fontSize: 30, 
-  fontWeight: 600, 
-  color: color||'var(--text)', 
-  lineHeight: 1,
-  fontVariantNumeric: 'tabular-nums'
-}}>
-  {val}
-</div>
+      <div style={{ fontFamily: 'var(--ff-body)', fontSize: 30, fontWeight: 600, color: color||'var(--text)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{val}</div>
       <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>{label}</div>
       {sub && <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>{sub}</div>}
     </div>
